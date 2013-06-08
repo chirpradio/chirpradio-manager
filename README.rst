@@ -10,8 +10,7 @@ A web-application that provides a simple graphical way to import and edit music 
 Installation
 ------------------
 
-Requires the [CHIRP Radio Machine](https://github.com/chirpradio/chirpradio-machine) and the 
-[CHIRP Radio](https://github.com/chirpradio/chirpradio) cloud application to 
+Requires the CHIRP Radio Machine and the CHIRP Radio cloud application to 
 be installed. The WORK_TREE variable in manager_settings.py should point to
 the local copy of the CHIRP Radio Machine.
 
