@@ -22,6 +22,7 @@ from chirp.library import dropbox
 from chirp.library import import_file
 from chirp.library import import_transaction
 
+import update_git
 
 VOLUME_NUMBER = 1
 IMPORT_SIZE_LIMIT = 0.95 * (3 << 30) # 95% of 3GB.
@@ -184,6 +185,10 @@ class ImportAlbums(Resource):
         for tpe1 in to_print:
             output.write(tpe1)
             output.write("\n")
+
+        if new_artists:
+            update_git.update()
+            logging.info('Artists whitelist pushed to Github')
 
         # reload artists module to repopulate global artists whitelist cache
         reload(artists)
