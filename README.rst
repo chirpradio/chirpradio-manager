@@ -55,6 +55,8 @@ For now, the application should only be run once a day. Adding the ability to ca
 or allow user input of timestamps will correct this problem. The manager_settings.py file
 has a DEV variable that when set to True will allow for a dry-run of the import process.
 
+Steps
+------------------
 
 Step #1: Scan Dropbox for Tracks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
