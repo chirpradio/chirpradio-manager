@@ -25,16 +25,16 @@ Resources
 The application wraps a REST server around the resources that sequentially process an import.
 Each resource corresponds to a step or steps from the script based process from the CHRIP Radio Machine.
 
-do_dump_new_artists_in_dropbox -> app/resources/dropbox.py
-do_dump_new_artists_in_dropbox --rewrite -> app/resources/importalbums.py
-git commit & push -> app/resources/importalbums.py
-do_periodic_import -> app/resources/importalbums.py
-which_remove_from_dropbox -> app/resources/move.py
-do_periodic_import --actually_do_import -> app/resources/importalbums.py
-empty_dropbox -> app/resources/importalbums.py
-do_generate_collection_nml -> app/resources/generate.py
-do_push_artists_to_chirpradio -> app/resources/push.py
-do_push_to_chirpradio -> app/resources/push.py
+| do_dump_new_artists_in_dropbox -> app/resources/dropbox.py
+| do_dump_new_artists_in_dropbox --rewrite -> app/resources/importalbums.py
+| git commit & push -> app/resources/importalbums.py
+| do_periodic_import -> app/resources/importalbums.py
+| which_remove_from_dropbox -> app/resources/move.py
+| do_periodic_import --actually_do_import -> app/resources/importalbums.py
+| empty_dropbox -> app/resources/importalbums.py
+| do_generate_collection_nml -> app/resources/generate.py
+| do_push_artists_to_chirpradio -> app/resources/push.py
+| do_push_to_chirpradio -> app/resources/push.py
 
 UI
 ------------------
