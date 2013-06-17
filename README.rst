@@ -2,7 +2,7 @@
 The CHIRP Music Manager
 =======================
 
-A web-application that provides a simple graphical way to import and edit music in the CHIRP Radio library.
+A web-application that provides a simple graphical way to import and edit music in the CHIRP Radio library. This is a work in progress and will be heavily refactored in the near future. Use accordingly!
 
 .. contents::
    :local:
@@ -48,7 +48,7 @@ you proceed.
 Quirks
 ------------------
 
-For now, the application should only be run once a day. Adding the ability to catalog timestamps i
+For now, the application should only be run once a day. Adding the ability to catalog timestamps 
 or allow user input of timestamps will correct this problem. The manager_settings.py file
 has a DEV variable that when set to True will allow for a dry-run of the import process.
 
