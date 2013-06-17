@@ -1,8 +1,10 @@
-# do_generate_collection_nml
+# do_generate_collection_nml.py
 
 import codecs
-import sh
+import logging
 import time
+
+import sh
 
 from flask.ext.restful import Resource
 from flask import current_app as app
@@ -43,7 +45,7 @@ class GenerateTraktorLibrary(Resource):
             message = "Wrote %d tracks to collection" % count
             logging.info(message)
             messages.append({'message': message, 'status': 'success'})
-        except:
+        except Exception, e:
             message = "Failed writing output.nml"
             messages.append({'message': message, 'status': 'error'})
 

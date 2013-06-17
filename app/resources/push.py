@@ -42,20 +42,18 @@ class PushToCloud(Resource):
         for art in models.Artist.fetch_all():
             if art.revoked:
                 continue
-            try:
-                std_name = artists.standardize(art.name)
-                if std_name != art.name:
-                    logging.info("Mapping %d: %s => %s" % (mapped, art.name, std_name))
-                    mapped += 1
-                    art.name = std_name
-                    idx = search.Indexer()
-                    idx._transaction = art.parent_key()
-                    idx.add_artist(art)
-                    if not app.config['DEV']:
-                        idx.save()
-                all_chirpradio_artists.add(art.name)
-            except:
-                pass
+            std_name = artists.standardize(art.name)
+            if std_name != art.name:
+                logging.info("Mapping %d: %s => %s" % (mapped, art.name, std_name))
+                mapped += 1
+                art.name = std_name
+                idx = search.Indexer()
+                idx._transaction = art.parent_key()
+                idx.add_artist(art)
+                if not app.config['DEV']:
+                    idx.save()
+            all_chirpradio_artists.add(art.name)
+        
         to_push = list(all_library_artists.difference(all_chirpradio_artists))
 
         message =  "Pushing %d artists" % len(to_push)

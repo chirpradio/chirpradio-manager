@@ -4,3 +4,4 @@ Jinja2==2.6
 Werkzeug==0.8.3
 mutagen==1.16
 wsgiref==0.1.2
+sh==1.08

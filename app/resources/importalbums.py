@@ -30,6 +30,7 @@ IMPORT_SIZE_LIMIT = 0.95 * (3 << 30) # 95% of 3GB.
 class ImportAlbums(Resource):
      
     def import_albums(self, inbox):
+        # do_periodic_import.py
         prescan_timestamp = timestamp.now()
         error_count = 0
         album_count = 0
@@ -72,7 +73,8 @@ class ImportAlbums(Resource):
                         track['title'] = au.tit2()
                         track['artist'] = au.tpe1()
                         track['album_id'] = albm['album_id']
-                    except:
+                    except Exception, e:
+                        logging.exception(e)
                         albm['messages'].append({'message': "error reading dropbox", 'status': 'error'})
                         albm['status'] = "error"
                         error_count += 1
@@ -84,8 +86,6 @@ class ImportAlbums(Resource):
                                   ("This one is at %s\n" % au.path)
                                   ("Other one is at %s" % seen_fp[au.fingerprint].path))
                         logging.error(message)
-                        #albm['messages'].append({'message': message, 'status': 'error'})
-                        #albm['status'] = 'error'
                         collision = True
                         # break
                     fp_au_file = db.get_by_fingerprint(au.fingerprint)
@@ -93,8 +93,6 @@ class ImportAlbums(Resource):
                         message = ("****** ERROR: TRACK ALREADY IN LIBRARY\n"+
                                    unicode(fp_au_file.mutagen_id3).encode("utf-8"))
                         logging.error(message)
-                        #albm['messages'].append({'message': message, 'status': 'error'})
-                        #albm['status'] = 'error'
                         collision = True
                         # break
                     seen_fp[au.fingerprint] = au
@@ -181,14 +179,15 @@ class ImportAlbums(Resource):
         to_print = list(new_artists)
         to_print.extend(artists.all())
         to_print.sort(key=artists.sort_key)
-        output = codecs.open(artists._WHITELIST_FILE, "w", "utf-8")
-        for tpe1 in to_print:
-            output.write(tpe1)
-            output.write("\n")
+        if not app.config['DEV']:
+            output = codecs.open(artists._WHITELIST_FILE, "w", "utf-8")
+            for tpe1 in to_print:
+                output.write(tpe1)
+                output.write("\n")
 
-        if new_artists:
-            update_git.update()
-            logging.info('Artists whitelist pushed to Github')
+            if new_artists:
+                update_git.update()
+                logging.info('Artists whitelist pushed to Github')
 
         # reload artists module to repopulate global artists whitelist cache
         reload(artists)

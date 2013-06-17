@@ -1,9 +1,7 @@
 """
- do_dump_new_artists_in_dropbox
- 
- modified to quickly scan  the dropbox and
- provide album information to the UI
+ from chirpradio-machine: do_dump_new_artists_in_dropbox
 """
+import logging
 
 from flask.ext.restful import Resource
 
@@ -30,8 +28,9 @@ class Dropbox(Resource):
                 talb = au_file.mutagen_id3['TALB'].text[0] # album
                 track = {'number': trck, 'title': tit2, 'artist': tpe1, 'album': talb, 'path': au_file.path}
                 tracks.append(track)
-            except:
+            except Exception, e:
                 tracks.append({'path': au_file.path})
+                logging.exception(e)
         albums = [] 
         album_titles = set(track.get('album') for track in tracks)
         for i, album_title in enumerate(album_titles):

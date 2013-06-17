@@ -295,11 +295,6 @@ App.WhitelistController = Em.ArrayController.extend({
   }
 });
 
-//App.MessagesController = Em.ArrayController.extend({
-//  addMessages: function(messages) {
-//  }
-//});
-
 // Views
 
 App.RouteStatus = Em.View.extend({

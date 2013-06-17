@@ -1,7 +1,9 @@
 # remove_from_dropbox.py
 
 import json
+import logging
 import os
+
 import sh
 
 from flask.ext.restful import Resource
@@ -47,7 +49,8 @@ class MoveAlbum(Resource):
                     sh.chmod('-R', '0775', ("%s" % dest))
                 message = "Successfully moved %r -> %r" % (dir, dest)
                 messages.append({'message': message, 'status': 'success'})
-            except: 
+            except Exception, e: 
+                logging.exception(e)
                 message = "There was a problem moving the album and setting permissions."
                 messages.append({'message': message, 'status': 'error'})
             

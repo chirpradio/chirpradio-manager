@@ -35,8 +35,6 @@ App.MessagesController = Em.ArrayController.extend({
           warning: (message.status === 'warning')
         }));
       });
-      //console.log(error);
-      //return error;
     })
   }
 });
