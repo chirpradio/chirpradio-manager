@@ -13,7 +13,8 @@ from resources.whitelist import Whitelist
 
 logging.basicConfig(filename="import.log", level=logging.DEBUG)
 
-SERVER_NAME = '0.0.0.0:5000'
+SERVER_NAME = '0.0.0.0'
+PORT_NAME = 5000
 
 app = Flask(__name__)
 app.config.from_object('manager_settings')
@@ -33,4 +34,4 @@ def index():
 
 if __name__ == '__main__':
 
-    app.run(debug=True)
+    app.run(SERVER_NAME, SERVER_PORT, debug=True)
