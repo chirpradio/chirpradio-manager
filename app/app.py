@@ -14,19 +14,19 @@ from resources.whitelist import Whitelist
 logging.basicConfig(filename="importer.log", level=logging.DEBUG)
 
 SERVER_NAME = '0.0.0.0'
-PORT_NAME = 5000
+SERVER_PORT = 5000
 
 app = Flask(__name__)
 app.config.from_object('manager_settings')
 api = Api(app)
-         
-api.add_resource(Dropbox, '/dropbox')       
+
+api.add_resource(Dropbox, '/dropbox')
 api.add_resource(GenerateTraktorLibrary, '/generate')
 api.add_resource(ImportAlbums, '/import')
 api.add_resource(MoveAlbum, '/move')
 api.add_resource(PushToCloud, '/push')
 api.add_resource(UpdateAlbums, '/update')
-api.add_resource(Whitelist, '/whitelist')       
+api.add_resource(Whitelist, '/whitelist')
 
 @app.route('/')
 def index():
