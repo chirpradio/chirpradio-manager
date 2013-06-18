@@ -11,7 +11,7 @@ from resources.push import PushToCloud
 from resources.update import UpdateAlbums
 from resources.whitelist import Whitelist
 
-logging.basicConfig(filename="import.log", level=logging.DEBUG)
+logging.basicConfig(filename="importer.log", level=logging.DEBUG)
 
 SERVER_NAME = '0.0.0.0'
 PORT_NAME = 5000
