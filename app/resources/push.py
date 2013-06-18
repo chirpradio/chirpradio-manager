@@ -210,6 +210,7 @@ class PushToCloud(Resource):
                     pending_albums.append(alb)
                     message += 'Adding "%s"\n' % alb.title()
                     messages.append({'message': message, 'status': 'success'})
+                    message = ''
                     logging.info(message)
                     pending_albums = maybe_flush(pending_albums)
                     this_album = []
