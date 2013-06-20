@@ -9,7 +9,7 @@ from chirp.library import artists, dropbox
 
 
 class Dropbox(Resource):
-    
+
     def dump_dropbox(self):
         drop = dropbox.Dropbox()
         tracks = []
@@ -31,7 +31,7 @@ class Dropbox(Resource):
             except Exception, e:
                 tracks.append({'path': au_file.path})
                 logging.exception(e)
-        albums = [] 
+        albums = []
         album_titles = set(track.get('album') for track in tracks)
         for i, album_title in enumerate(album_titles):
             if album_title:

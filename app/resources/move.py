@@ -13,7 +13,7 @@ from chirp.common import conf
 
 parser = reqparse.RequestParser()
 parser.add_argument('data', type=unicode)
-        
+
 class MoveAlbum(Resource):
 
     def put(self):
@@ -41,17 +41,19 @@ class MoveAlbum(Resource):
         if messages:
             return {'messages': messages}
         else:
-            try: 
-                os.rename(dir, dest) 
+            try:
+                os.rename(dir, dest)
                 with sh.sudo:
                     sh.chown('-R', 'musiclib', ("%s" % dest))
                     sh.chgrp('-R', 'traktor', ("%s" % dest))
                     sh.chmod('-R', '0775', ("%s" % dest))
                 message = "Successfully moved %r -> %r" % (dir, dest)
                 messages.append({'message': message, 'status': 'success'})
-            except Exception, e: 
+            except Exception, e:
+                # sudo failed move dir back
+                os.rename(dest, dir)
                 logging.exception(e)
                 message = "There was a problem moving the album and setting permissions."
                 messages.append({'message': message, 'status': 'error'})
-            
+
             return {'messages': messages}
