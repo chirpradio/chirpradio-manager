@@ -145,7 +145,6 @@ class ImportAlbums(Resource):
             logging.error("Saw %d errors" % error_count)
             return {'albums': albums}
         else:
-            raw_intput()
             txn = None
             for alb in inbox.albums():
                 if txn is None:
