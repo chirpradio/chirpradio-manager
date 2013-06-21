@@ -23,11 +23,6 @@ App.MessagesController = Em.ArrayController.extend({
   getMessages: function(resource) {
     var self = this;
     return $.getJSON(resource, function(response) {
-      var error = false;
-      response.messages.forEach(function(message) {
-        if (message.status === 'error') {
-          error = true;
-        }
         self.unshiftObject(App.Message.create({
           message: message.message,
           error: (message.status === 'error'),
