@@ -199,9 +199,7 @@ App.AlbumsControllerMixin = Em.Mixin.create({
       data: {data: JSON.stringify(album.get('path'))},
       success: function(response) {
         self.get('controllers.messages').send('addMessages', response.messages);
-        console.log(response);
         var err = response.messages.filterProperty('status', 'error');
-        console.log(err);
         console.log(err.length);
         if (err.length == 0) {
           console.log('remove')
