@@ -55,7 +55,6 @@ class PushToCloud(Resource):
             all_chirpradio_artists.add(art.name)
         
         to_push = list(all_library_artists.difference(all_chirpradio_artists))
-
         message =  "Pushing %d artists" % len(to_push)
         messages.append({'message': message, 'status': 'success'})
         while to_push:
@@ -208,7 +207,7 @@ class PushToCloud(Resource):
                 if this_album and this_album[0].album_id != au_file.album_id:
                     alb = album.Album(this_album)
                     pending_albums.append(alb)
-                    message += 'Adding "%s"\n' % alb.title()
+                    message = 'Adding "%s"\n' % alb.title()
                     messages.append({'message': message, 'status': 'success'})
                     message = ''
                     logging.info(message)
