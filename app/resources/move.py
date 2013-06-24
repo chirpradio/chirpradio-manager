@@ -28,10 +28,11 @@ class MoveAlbum(Resource):
         while proc.is_running():
             continue
         out = proc.stdout.read()
-        err = proc.stderr.read()
+
         if out:
             messages.append({'status': 'success', 'message': out})
-        if err:
-            messages.append({'status': 'error', 'message': err})
+        else:
+            message = 'failed to remove album %s from dropbox please remove manually' % (dir)
+            messages.append({'status': 'error', 'message': message})
         
         return {'messages': messages}
