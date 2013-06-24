@@ -23,12 +23,14 @@ App.MessagesController = Em.ArrayController.extend({
   getMessages: function(resource) {
     var self = this;
     return $.getJSON(resource, function(response) {
-      self.unshiftObject(App.Message.create({
-        message: message.message,
-        error: (message.status === 'error'),
-        success: (message.status === 'success'),
-        warning: (message.status === 'warning')
-      }));
+      response.messages.forEach(function(message) {
+        self.unshiftObject(App.Message.create({
+          message: message.message,
+          error: (message.status === 'error'),
+          success: (message.status === 'success'),
+          warning: (message.status === 'warning')
+        }));
+      });
     });
   }
 });
