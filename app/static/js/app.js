@@ -19,38 +19,6 @@ App.IndexRoute = Em.Route.extend({
   }
 });
 
-// Route Mixin
-
-App.RouteMixin = Em.Mixin.create({
-  model: function() {
-    return App.Album.all(this.resource);
-  },
-  activate: function() {
-    this.controllerFor(this.resource).set('loading', true);
-  },
-  deactivate: function() {
-    this.controllerFor('application').set('loaded', false);
-    console.log('clearing messages');
-    this.controllerFor('messages').clear();
-  },
-  setupController: function(controller, model) {
-    var self = this;
-    model.then(function(data) {
-      // extract the messages
-      var messages = Em.A();
-      data.forEach(function(album) {
-        messages.addObjects(album.messages);
-      });
-      self.controllerFor('messages').send('addMessages', messages);
-
-      self.controllerFor('application').set('loaded', true);
-      controller.set('content', data);
-      
-      controller.set('loading', false);
-      controller.set('loaded', true);
-    });
-  }
-});
 
 // Routes
 
@@ -63,93 +31,98 @@ App.LandingRoute = Em.Route.extend({
   }
 });
 
-App.DropboxRoute = Em.Route.extend(App.RouteMixin, {
-  resource: 'dropbox',
-  renderTemplate: function() {
-    this.render('albums');
-  },
-  setupController: function(controller, model) {
-    this._super(controller, model);
 
-    // load whitelist
-    var whitelist = Em.A();
-    var self = this;
-    $.getJSON('whitelist', function(response) {
-      response.whitelist.forEach(function(name) {
-        whitelist.push(Em.Object.create({
-          name: name,
-          nameUpper: name.toUpperCase()
-        }));
-      });
-      self.controllerFor('application').set('whitelist', true);
-    });
-    this.controllerFor('whitelist').set('content', whitelist);
-  },
-  deactivate: function() {
-    //this.controllerFor('messages').send('getMessages', 'update_whitelist');
-    this._super();
-  }
-});
-
-App.ImportRoute = Em.Route.extend(App.RouteMixin, {
-  resource: 'import',
-  renderTemplate: function() {
-    this.render('albums');
+App.AlbumsRouteMixin = Em.Mixin.create({
+  model: function() {
+    return App.Album.all(this.resource);
   },
   activate: function() {
-    this._super();
-    this.controllerFor('application').set('whitelist', false);
+    this.controllerFor(this.resource).set('loading', true);
+  },
+  deactivate: function() {
+    this.controllerFor('application').set('loaded', false);
+    this.controllerFor('messages').clear();
+  },
+  setupController: function(controller, model) {
+    var self = this;
+    
+    model.then(function(data) {
+      // extract the messages
+      var messages = Em.A();
+      data.forEach(function(album) {
+        messages.addObjects(album.messages);
+      });
+      self.controllerFor('messages').send('addMessages', messages);
+      self.controllerFor('application').set('loaded', true);
+      controller.set('content', data);
+      controller.set('loading', false);
+      controller.set('loaded', true);
+    });
+    
+    // load whitelist
+    if (this.get('whitelist') === true) {
+      var whitelist = Em.A();
+      $.getJSON('whitelist', function(response) {
+        response.whitelist.forEach(function(name) {
+          whitelist.push(Em.Object.create({
+            name: name,
+            nameUpper: name.toUpperCase()
+          }));
+        });
+        self.controllerFor('application').set('whitelist', true);
+      });
+      this.controllerFor('whitelist').set('content', whitelist);
+    }
+  },
+
+  renderTemplate: function() {
+    this.render('albums');
+  },
+});
+
+App.DropboxRoute = Em.Route.extend(App.AlbumsRouteMixin, {
+  resource: 'dropbox',
+  whitelist: true,
+});
+
+App.ImportRoute = Em.Route.extend(App.AlbumsRouteMixin, {
+  resource: 'import',
+  whitelist: false,
+});
+
+
+App.MessagesRouteMixin = Em.Mixin.create({
+  renderTemplate: function() {
+    this.render('albums', {
+      controller: 'import'
+    });
+  },
+  deactivate: function() {
+    this.controllerFor('application').set('loaded', false);
+  },
+  setupController: function(controller, model) {
+    controller.set('state', 'working');
+    var errorStatus = this.controllerFor('messages').getMessages(this.resource);
+    var self = this;
+    errorStatus.then(function(error) {
+      var err = error.messages.filterProperty('status', 'error');
+      self.controllerFor('application').set('loaded', true);
+      // set error or success state of route
+      if (err.length) {
+        controller.set('state', 'error');
+      } else {
+        controller.set('state', 'done');
+      }
+    });
   }
 });
 
-App.GenerateRoute = Em.Route.extend({
+App.GenerateRoute = Em.Route.extend(App.MessagesRouteMixin, {
   resource: 'generate',
-  renderTemplate: function() {
-    this.render('albums', {
-      controller: 'import'
-    });
-  },
-  deactivate: function() {
-    this.controllerFor('application').set('loaded', false);
-  },
-  setupController: function(controller, model) {
-    controller.set('state', 'working');
-    var errorStatus = this.controllerFor('messages').getMessages(this.resource);
-    var self = this;
-    errorStatus.then(function(error) {
-      self.controllerFor('application').set('loaded', true);
-      if (error.messages.filterProperty('status') === 'error') {
-          controller.set('state', 'error');
-      } else {
-          controller.set('state', 'done');
-      }
-    });
-  }
 });
 
-App.PushRoute = Em.Route.extend({
+App.PushRoute = Em.Route.extend(App.MessagesRouteMixin, {
   resource: 'push',
-  renderTemplate: function() {
-    this.render('albums', {
-      controller: 'import'
-    });
-  },
-  deactivate: function() {
-    this.controllerFor('application').set('loaded', false);
-  },
-  setupController: function(controller, model) {
-    controller.set('state', 'working');
-    var errorStatus = this.controllerFor('messages').getMessages(this.resource);
-    var self = this;
-    errorStatus.then(function(error) {
-      self.controllerFor('application').set('loaded', true);
-      if (error.messages.filterProperty('status') === 'error') {
-          controller.set('state', 'error');
-      } else {
-          controller.set('state', 'done');
-      }
-    });
-  }
 });
 
 // Controller Mixin
@@ -293,6 +266,7 @@ App.WhitelistController = Em.ArrayController.extend({
   }
 });
 
+
 // Views
 
 App.RouteStatus = Em.View.extend({
@@ -306,7 +280,6 @@ App.RouteStatus = Em.View.extend({
     }
   }.property('controller.state'),
 });
-
 
 App.AlbumView = Em.View.extend({
   templateName: 'album',
