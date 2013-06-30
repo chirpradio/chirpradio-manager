@@ -173,15 +173,12 @@ App.AlbumsControllerMixin = Em.Mixin.create({
       success: function(response) {
         self.get('controllers.messages').send('addMessages', response.messages);
         var err = response.messages.filterProperty('status', 'error');
-        console.log(err.length);
         if (err.length == 0) {
-          console.log('remove')
           self.removeObject(album);
         }
         var errs = self.filterProperty('status', 'error');
         if (errs.length == 0) {
           self.transitionToRoute('dropbox');
-          self.set('loaded', false);
         }
       }
     });
