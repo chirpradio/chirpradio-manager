@@ -9,7 +9,7 @@ from chirp.library import artists, dropbox
 
 
 class Dropbox(Resource):
-        
+
     def _sort_albums(self, albums):
         # first sort by title then artist
         result = sorted(albums, key=lambda album: album.get('title'))
@@ -30,7 +30,8 @@ class Dropbox(Resource):
                     track = {'number': trck, 'title': tit2, 'artist': tpe1, 'album': talb, 'path': au_file.path}
                     tracks.append(track)
                 except Exception, e:
-                    tracks.append({'path': au_file.path, 'artist': '*error*', 'album': au_file.path})
+                    path = '/'.join(au_file.path.split('/')[:-1])
+                    tracks.append({'path': au_file.path, 'title': au_file.path, 'artist': '*error*', 'album': path})
                     logging.exception(e)
         except Exception, e:
             logging.exception(e)
@@ -51,7 +52,10 @@ class Dropbox(Resource):
                         album['artist'].append(track.get('artist'))
                 artists_list = list(set(album.get('artist')))
                 album['artist'] = artists_list if len(artists_list) > 1 else artists_list[0]
-                if type(album.get('artist')) != list:
+                if album['artist'] == '*error*':
+                    album['status'] = 'error'
+                    album['messages'].append({'message': "There was a problem reading the dropbox. Please remove the error producing albums to continue.", 'status': 'error'})
+                elif type(album.get('artist')) != list:
                     if artists.standardize(album.get('artist')) == None:
                         album['status'] = 'warning'
                         album['messages'].append({'message': "New artist name. Check the artist list", 'status': 'warning'})
