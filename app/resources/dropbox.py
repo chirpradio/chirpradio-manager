@@ -9,16 +9,17 @@ from chirp.library import artists, dropbox
 
 
 class Dropbox(Resource):
+        
+    def _sort_albums(self, albums):
+        # first sort by title then artist
+        result = sorted(albums, key=lambda album: album.get('title'))
+        result = sorted(result, key=lambda album: album.get('artist'))
+        return result
 
-    def dump_dropbox(self):
-        drop = dropbox.Dropbox()
+    def dump_dropbox(self, dropbox_path=None):
+        drop = dropbox.Dropbox(dropbox_path=dropbox_path)
         tracks = []
 
-        def sort_albums(albums):
-            # first sort by title then artist
-            result = sorted(albums, key=lambda album: album.get('title'))
-            result = sorted(result, key=lambda album: album.get('artist'))
-            return result
         try:
             for au_file in drop.tracks():
                 try:
@@ -55,7 +56,7 @@ class Dropbox(Resource):
                         album['status'] = 'warning'
                         album['messages'].append({'message': "New artist name. Check the artist list", 'status': 'warning'})
                 albums.append(album)
-        albums = sort_albums(albums)
+        albums = self._sort_albums(albums)
         return {'albums': albums}
 
     def get(self):
