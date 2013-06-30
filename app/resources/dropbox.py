@@ -9,28 +9,34 @@ from chirp.library import artists, dropbox
 
 
 class Dropbox(Resource):
+        
+    def _sort_albums(self, albums):
+        # first sort by title then artist
+        result = sorted(albums, key=lambda album: album.get('title'))
+        result = sorted(result, key=lambda album: album.get('artist'))
+        return result
 
-    def dump_dropbox(self):
-        drop = dropbox.Dropbox()
+    def dump_dropbox(self, dropbox_path=None):
+        drop = dropbox.Dropbox(dropbox_path=dropbox_path)
         tracks = []
 
-        def sort_albums(albums):
-            # first sort by title then artist
-            result = sorted(albums, key=lambda album: album.get('title'))
-            result = sorted(result, key=lambda album: album.get('artist'))
-            return result
-
-        for au_file in drop.tracks():
-            try:
-                tpe1 = au_file.mutagen_id3['TPE1'].text[0] # artist
-                tit2 = au_file.mutagen_id3['TIT2'].text[0] # track title
-                trck = au_file.mutagen_id3['TRCK'].text[0].split('/')[0] # track number
-                talb = au_file.mutagen_id3['TALB'].text[0] # album
-                track = {'number': trck, 'title': tit2, 'artist': tpe1, 'album': talb, 'path': au_file.path}
-                tracks.append(track)
-            except Exception, e:
-                tracks.append({'path': au_file.path})
-                logging.exception(e)
+        try:
+            for au_file in drop.tracks():
+                try:
+                    tpe1 = au_file.mutagen_id3['TPE1'].text[0] # artist
+                    tit2 = au_file.mutagen_id3['TIT2'].text[0] # track title
+                    trck = au_file.mutagen_id3['TRCK'].text[0].split('/')[0] # track number
+                    talb = au_file.mutagen_id3['TALB'].text[0] # album
+                    track = {'number': trck, 'title': tit2, 'artist': tpe1, 'album': talb, 'path': au_file.path}
+                    tracks.append(track)
+                except Exception, e:
+                    tracks.append({'path': au_file.path, 'artist': '*error*', 'album': au_file.path})
+                    logging.exception(e)
+        except Exception, e:
+            logging.exception(e)
+            message = str(e) + ' ** Please manually remove this album from the dropbox'
+            messages = [{'message': message, 'status': 'error'}]
+            return {'albums': [{'artist': '*error*', 'status': 'error', 'messages': messages, 'tracks': []}]}
         albums = []
         album_titles = set(track.get('album') for track in tracks)
         for i, album_title in enumerate(album_titles):
@@ -50,7 +56,7 @@ class Dropbox(Resource):
                         album['status'] = 'warning'
                         album['messages'].append({'message': "New artist name. Check the artist list", 'status': 'warning'})
                 albums.append(album)
-        albums = sort_albums(albums)
+        albums = self._sort_albums(albums)
         return {'albums': albums}
 
     def get(self):

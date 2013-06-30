@@ -96,7 +96,9 @@
           <td class="arror"><i class="icon-arrow-right" {{action toggle this}}></i></td>
           <td class="album-title title">{{title}}</td>
           <td class="artist">{{artist}}</td>
+          {{# if path}}
           <td id="remove" class="move" {{action move this}}>✕{{view App.Inserted}}</td>
+          {{/if}}
         </tr>
         {{/if}}
         

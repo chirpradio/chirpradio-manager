@@ -6,7 +6,6 @@ App.Message = Em.Object.extend({
 });
 
 App.MessagesController = Em.ArrayController.extend({
-  //needs: ['albums'],
   addMessages: function(messages) {
     var self = this;
     messages.forEach(function(message) {
@@ -23,6 +22,7 @@ App.MessagesController = Em.ArrayController.extend({
   getMessages: function(resource) {
     var self = this;
     return $.getJSON(resource, function(response) {
+      var messages = Em.A();
       response.messages.forEach(function(message) {
         self.unshiftObject(App.Message.create({
           message: message.message,
