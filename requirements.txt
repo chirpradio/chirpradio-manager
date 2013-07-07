@@ -2,6 +2,10 @@ Flask==0.9
 Flask-RESTful==0.2.1
 Jinja2==2.6
 Werkzeug==0.8.3
+-e git+https://github.com/chirpradio/chirpradio-machine@8be165dfcdd74b7db8138b1e154f6e576495bdcd#egg=chirp-dev
+desub==1.0.3
+mock==1.0.1
 mutagen==1.16
-wsgiref==0.1.2
+psutil==0.7.1
+pycrypto==2.6
 sh==1.08
