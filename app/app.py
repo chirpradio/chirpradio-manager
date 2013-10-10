@@ -1,5 +1,3 @@
-import logging
-
 from flask import Flask, render_template
 from flask.ext.restful import Api
 
@@ -11,10 +9,10 @@ from resources.push import PushToCloud
 from resources.update import UpdateAlbums
 from resources.whitelist import Whitelist
 
-logging.basicConfig(filename="importer.log", level=logging.DEBUG)
 
 SERVER_NAME = '0.0.0.0'
 SERVER_PORT = 5000
+
 
 app = Flask(__name__)
 app.config.from_object('manager_settings')
@@ -27,9 +25,11 @@ api.add_resource(PushToCloud, '/push')
 api.add_resource(UpdateAlbums, '/update')
 api.add_resource(Whitelist, '/whitelist')
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 if __name__ == '__main__':
 
