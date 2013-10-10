@@ -22,12 +22,16 @@ App.DropboxController = Em.ArrayController.extend({
 
 App.ToggleView = Em.View.extend({
   tagName: 'i',
-  classNameBinding: ['toggle'],
+  classNameBindings: ['toggle'],
+  open: false,
   toggle: function() { 
-    return 'icon-arrow-right';
-  }.property(),
+    if (this.open) {
+      return 'icon-arrow-down';
+    } else {
+      return 'icon-arrow-right';
+    }
+  }.property('open'),
   click: function(event) {
-    console.log(this.get('album'));
-    console.log('he');
+    this.set('open', !this.open);
   },
 });
