@@ -2,7 +2,7 @@
 $.ajax({
   url: '/static/hbs/dropbox.html',
   async: false,
-  dataType: 'text',
+  dataType: 'html',
   success: function(response) {
     App.DropboxView = Em.View.extend({
       template: Em.Handlebars.compile(response),
@@ -23,15 +23,18 @@ App.DropboxController = Em.ArrayController.extend({
 App.ToggleView = Em.View.extend({
   tagName: 'i',
   classNameBindings: ['toggle'],
-  open: false,
+  click: function(event) {
+    this.set('parentView.open', !this.get('parentView.open'));
+  },
   toggle: function() { 
-    if (this.open) {
+    if (this.get('parentView.open')) {
       return 'icon-arrow-down';
     } else {
       return 'icon-arrow-right';
     }
-  }.property('open'),
-  click: function(event) {
-    this.set('open', !this.open);
-  },
+  }.property('parentView.open'),
+});
+
+App.AlbumView = Em.View.extend({
+  open: false
 });
