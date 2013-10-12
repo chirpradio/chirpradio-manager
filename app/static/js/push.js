@@ -4,7 +4,7 @@ $.ajax({
   async: false,
   dataType: 'text',
   success: function(response) {
-    App.LandingView = Em.View.extend({
+    App.PushView = Em.View.extend({
       template: Em.Handlebars.compile(response),
     });
   }
@@ -12,4 +12,5 @@ $.ajax({
 
 App.PushController = Em.Controller.extend({
   nextPath: 'success',
+  status: null,
 });
