@@ -1,12 +1,8 @@
 <ul class="nav nav-tabs">
   <li class="nav-header"><a href="/">Importer</a></li>
-  <li>1. Scan Dropbox for Tracks {{view App.StatusIcon}}</li>
-  <li>2. Import Tracks</li>
-  <li>3. Generate Traktor File</li>
-  <li>4. Push Tracks to DJ Database</li>
-  {{#if disabled}}
-  <li><button class="btn" disabled>Next Step</button>
-  {{else}}
-  <li><button class="btn" {{action next}}>Next Step</button>
-  {{/if}}
+  <li>1. Scan Dropbox for Tracks {{view App.StatusIcon resource='dropbox'}}</li>
+  <li>2. Import Tracks{{view App.StatusIcon resource='import'}}</li>
+  <li>3. Generate Traktor File{{view App.StatusIcon resource='traktor'}}</li>
+  <li>4. Push Tracks to DJ Database{{view App.StatusIcon resource='push'}}</li>
+  {{view App.NextButton}}
 </ul>
