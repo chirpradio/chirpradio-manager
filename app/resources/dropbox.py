@@ -1,6 +1,8 @@
 """
  from chirpradio-machine: do_dump_new_artists_in_dropbox
 """
+import re
+
 from flask.ext.restful import Resource
 
 import chirp.library as chirp
@@ -32,10 +34,12 @@ class Dropbox(Resource):
                 album['title'] = alb.title()
                 album['tracks'] = []
                 for au_file in alb.all_au_files:
+                    number = re.search('^[0-9]*', au_file.mutagen_id3['TRCK'].text[0]).group(0)
                     album['tracks'].append({
-                        'number': au_file.mutagen_id3['TRCK'].text[0],
+                        'number': number,
                         'title': au_file.tit2(),
                     })
+            album['error'] = False
             albums.append(album) 
         return albums
 
