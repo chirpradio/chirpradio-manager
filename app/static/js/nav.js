@@ -1,22 +1,12 @@
-// async load template
-$.ajax({
-  url: '/static/hbs/nav.html',
-  async: false,
-  dataType: 'text',
-  success: function(response) {
-    App.NavView = Em.View.extend({
-      template: Em.Handlebars.compile(response),
-      tagName: '',
-    });
-  }
-});
-
 App.StatusIcon = Em.View.extend({
+  boundController: function () {
+    // return the controller bound by name from the nav template
+    return this.get('controller').get('controllers.'+this.get('resource'));
+  }.property(),
   tagName: 'i',
   classNameBindings: ['status'],
   status: function() {
-  var resource = this.get('resource');
-  var status = this.get('controller').get('controllers.'+resource+'.status');
+    var status = this.get('boundController.status');
     if (status === 'working') {
       return 'icon-spinner icon-spin';
     } else if (status === 'done') {
@@ -24,10 +14,13 @@ App.StatusIcon = Em.View.extend({
     } else if (status === 'error') {
       return 'icon-remove';
     }
-  }.property('controllers.dropbox.status'),
+  }.property('boundController.status'),
 });
 
 App.NextButton = Em.View.extend({
+  click: function() {
+    this.get('controller').send('next');
+  },
   tagName: 'button',
   template: Em.Handlebars.compile('Next Step'),
   classNames: ['btn'],
@@ -35,4 +28,8 @@ App.NextButton = Em.View.extend({
   disabled: function() {
     return this.get('controller.error');
   }.property('controller.error')
+});
+
+App.NavController = Em.Controller.extend({
+  needs: ['dropbox', 'import', 'traktor', 'push'],
 });

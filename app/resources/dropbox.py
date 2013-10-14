@@ -10,6 +10,7 @@ import chirp.library as chirp
 class Dropbox(Resource):
 
     def dump_dropbox(self):
+
         drop = chirp.dropbox.Dropbox()
         albums = []
         for path in sorted(drop._dirs):
@@ -31,6 +32,10 @@ class Dropbox(Resource):
                 else:
                     album['compilation'] = False
                     album['artist'] = alb.artist_name()
+                    
+                    if not chirp.artists.standardize(album['artist']):
+                        album['warning'] = True
+
                 album['title'] = alb.title()
                 album['tracks'] = []
                 for au_file in alb.all_au_files:
@@ -39,7 +44,7 @@ class Dropbox(Resource):
                         'number': number,
                         'title': au_file.tit2(),
                     })
-            album['error'] = False
+            album['error'] = True
             albums.append(album) 
         return albums
 
