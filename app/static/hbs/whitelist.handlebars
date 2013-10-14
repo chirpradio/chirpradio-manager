@@ -1,0 +1,10 @@
+<div class="artist-search">
+  {{input valueBinding='searchPhrase' placeholder='Type to search the artist list'}}
+  {{# if isSearching}}
+    <div id="search-result">
+    {{#each name in displayContent}}
+      <div>{{name}}</div>
+    {{/each}}
+    </div>
+  {{/if}}
+</div>
