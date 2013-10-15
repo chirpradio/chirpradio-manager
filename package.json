@@ -1,10 +1,12 @@
 {
   "name": "chirpradio-manager",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-contrib-jshint": "~0.6.3",
-    "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt-ember-templates": "0.4.15"
+    "grunt": "0.4.1",
+    "grunt-contrib-connect": "0.5.0",
+    "grunt-contrib-jshint": "0.6.4",
+    "grunt-contrib-handlebars": "0.5.11",
+    "grunt-contrib-qunit": "0.3.0",
+    "grunt-contrib-watch": "0.5.3"
   }
 }

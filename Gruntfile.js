@@ -2,11 +2,10 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    emberTemplates: {
+    handlebars: {
       compile: {
         options: {
-          amd: false,
-          templateBasePath: /app\/static\/hbs\//
+          namespace: "App.Templates",
         },
         files: {
           "app/static/js/result.js": "app/static/hbs/*.handlebars"
@@ -15,8 +14,8 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-ember-templates');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
   
-  grunt.registerTask('default', ['emberTemplates']);
+  grunt.registerTask('default', ['handlebars']);
 
 };
