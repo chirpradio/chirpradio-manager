@@ -4,14 +4,13 @@
     <meta charset="utf-8">
     <title>Webcontrol</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="icon" type="image/ico" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/ico" href="/static/img/favicon.ico">
   </head>
   <body>
-  {% raw %}
   <div id="ember">
     <script type="text/x-handlebars">
       <div class="tabbable tabs-left">
@@ -25,19 +24,18 @@
       </div>
     </script>
   </div>
-  {% endraw %}
-    <script src="{{ url_for('static', filename='js/lib/jquery-1.9.1.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/lib/bootstrap.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/lib/handlebars-1.0.0.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/lib/ember-1.0.0.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/nav.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/whitelist.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/dropbox.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/import.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/traktor.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/push.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/result.js') }}"></script>
+    <script src="/static/js/lib/jquery-1.9.1.js"></script>
+    <script src="/static/js/lib/bootstrap.js"></script>
+    <script src="/static/js/lib/handlebars-1.0.0.js"></script>
+    <script src="/static/js/lib/ember-1.0.0.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/nav.js"></script>
+    <script src="/static/js/whitelist.js"></script>
+    <script src="/static/js/landing.js"></script>
+    <script src="/static/js/dropbox.js"></script>
+    <script src="/static/js/import.js"></script>
+    <script src="/static/js/traktor.js"></script>
+    <script src="/static/js/push.js"></script>
+    <script src="/static/js/result.js"></script>
   </body>
 </html>
