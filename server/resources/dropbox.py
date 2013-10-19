@@ -23,12 +23,11 @@ class Dropbox(Resource):
                     'path': path,
                 })
                 continue
-           
+
             for alb in chirp_albums:
                 album = {}
                 if alb.is_compilation():
                     album['compilation'] = True
-                    album['artists'] = alb.all_artist_names()
                 else:
                     album['compilation'] = False
                     album['artist'] = alb.artist_name()
@@ -40,12 +39,13 @@ class Dropbox(Resource):
                 album['tracks'] = []
                 for au_file in alb.all_au_files:
                     number = re.search('^[0-9]*', au_file.mutagen_id3['TRCK'].text[0]).group(0)
-                    album['tracks'].append({
-                        'number': number,
-                        'title': au_file.tit2(),
-                    })
-            album['error'] = True
+                    track = {'number': number, 'title': au_file.tit2()}
+                    if album['compilation']:
+                        tracks['artist'] = au_file.tpe1()
+                    album['tracks'].append(track)
+
             albums.append(album) 
+
         return albums
 
     def get(self):

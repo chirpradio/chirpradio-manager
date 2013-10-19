@@ -1,3 +1,30 @@
+(function() {
+
+Ember.TEMPLATES["application"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+  var buffer = '', stack1, hashTypes, hashContexts, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+
+
+  data.buffer.push("<div class=\"tabbable tabs-left\">\n  ");
+  hashTypes = {};
+  hashContexts = {};
+  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.render || depth0.render),stack1 ? stack1.call(depth0, "nav", options) : helperMissing.call(depth0, "render", "nav", options))));
+  data.buffer.push("\n  <div class=\"span9\">\n    ");
+  hashTypes = {};
+  hashContexts = {};
+  data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "outlet", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push("\n  </div>\n  <div class=\"span3\">\n  ");
+  hashTypes = {};
+  hashContexts = {};
+  options = {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+  data.buffer.push(escapeExpression(((stack1 = helpers.render || depth0.render),stack1 ? stack1.call(depth0, "whitelist", options) : helperMissing.call(depth0, "render", "whitelist", options))));
+  data.buffer.push("\n  </div>\n</div>\n");
+  return buffer;
+  
+});
+
 Ember.TEMPLATES["dropbox"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
@@ -111,7 +138,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   
 
 
-  data.buffer.push("<h3>Instructions</h1>\n<ol>\n  <li>\n    <p>This step will show the albums in the dropbox. Carefully proofread the album information. Artist, album and track names can be edited by double clicking on them. Artist names that are not already in the music library will be highlighted in yellow. You \n      should use the search bar on the right to make sure the artist's name is spelled correctly. If an error occurs, the album will be highlighted in red and an X will appear next to the album title. Click the X to move the album from the dropbox to the \n      needs fixing folder. Albums with errors must be removed to proceed.</p>\n  </li>\n  <li>\n    <p>This step will import the albums in the dropbox into the Chirp Library. It may take a while to run. If any albums produce errors, they should be removed by pressing the X. Albums with errors must be removed to continue.</p>\n  </li>\n  <li>\n    <p>This step will create a file named new-collection.nml in the Traktor root directory. At this point Traktor can be switched over to the new collection whereby you shut down Traktor, rename new-collection.nml to collection.nml and restart Traktor</p>\n  </li>\n  <li>\n    <p>This step will upload the artist, album and track info to the DJ Database.</p>\n  </li>\n</ol>\n");
+  data.buffer.push("<h3>Instructions</h1>\n<ol id=\"instructions\">\n  <li>\n    <p>This step will show the albums in the dropbox. Carefully proofread the album information. Artist, album and track names can be edited by double clicking on them. Artist names that are not already in the music library will be highlighted in yellow. You \n      should use the search bar on the right to make sure the artist's name is spelled correctly. If an error occurs, the album will be highlighted in red and an X will appear next to the album title. Click the X to move the album from the dropbox to the \n      needs fixing folder. Albums with errors must be removed to proceed.</p>\n  </li>\n  <li>\n    <p>This step will import the albums in the dropbox into the Chirp Library. It may take a while to run. If any albums produce errors, they should be removed by pressing the X. Albums with errors must be removed to continue.</p>\n  </li>\n  <li>\n    <p>This step will create a file named new-collection.nml in the Traktor root directory. At this point Traktor can be switched over to the new collection whereby you shut down Traktor, rename new-collection.nml to collection.nml and restart Traktor</p>\n  </li>\n  <li>\n    <p>This step will upload the artist, album and track info to the DJ Database.</p>\n  </li>\n</ol>\n");
   
 });
 
@@ -218,3 +245,285 @@ function program2(depth0,data) {
   return buffer;
   
 });
+
+})();
+
+(function() {
+
+window.App = Em.Application.create({
+  rootElement: window.TESTING ? '#qunit-fixture' : '#importer'
+});
+if (window.TESTING) {
+  //window.App.deferReadiness();
+}
+
+
+})();
+
+(function() {
+
+App.Router.map(function() {
+  this.route('landing');
+  this.route('dropbox');
+  this.route('import');
+});
+
+
+})();
+
+(function() {
+
+App.DropboxRoute = Em.Route.extend({
+  model: function() {
+    return Em.$.getJSON('/dropbox');
+  },
+  setupController: function(controller, model) {
+    
+    model.forEach(function(album) {
+      if (album.error) {
+        controller.set('status', 'error');
+      }
+      if (album.warning) {
+        controller.set('status', 'warning');
+      }
+    });
+    
+    if (!(controller.get('status') === 'error')) {
+      controller.set('status', 'done');
+    }
+
+    // setup whitelist
+    var self = this;
+    Em.$.getJSON('/whitelist', function(response) {
+      self.controllerFor('whitelist').set('content', response);
+    });
+
+    controller.set('model', model);
+
+  },
+  beforeModel: function() {
+    this.controllerFor('dropbox').set('status', 'working');
+  },
+  actions: {
+    willTransition: function(transition) {
+      if (this.get('controller.error')) {
+        transition.abort();
+      }
+    },
+  },
+});
+
+
+})();
+
+(function() {
+
+// Redirect to landing page
+
+App.IndexRoute = Em.Route.extend({
+  redirect: function() {
+    this.transitionTo('landing');
+  },
+});
+
+
+})();
+
+(function() {
+
+App.AlbumView = Em.View.extend({
+  open: false,
+});
+
+App.ToggleView = Em.View.extend({
+  tagName: 'i',
+  classNameBindings: ['toggle'],
+  click: function() {
+    var open = this.get('parentView.open');
+    this.get('parentView.parentView.childViews').forEach(function(albumView) {
+      albumView.set('open', false);
+    });
+    if (!open) {
+      this.set('parentView.open', !this.get('parentView.open'));
+    }
+  },
+  toggle: function() { 
+    return 'icon-arrow-' + (this.get('parentView.open') ? 'down' : 'right');
+  }.property('parentView.open'),
+});
+
+
+})();
+
+(function() {
+
+App.StatusIcon = Em.View.extend({
+  boundController: function () {
+    // return the controller bound by name from the nav template
+    return this.get('controller').get('controllers.'+this.get('resource'));
+  }.property(),
+  tagName: 'i',
+  classNameBindings: ['status'],
+  status: function() {
+    var status = this.get('boundController.status');
+    if (status === 'working') {
+      return 'icon-spinner icon-spin';
+    } else if (status === 'done') {
+      return 'icon-ok';
+    } else if (status === 'error') {
+      return 'icon-remove';
+    }
+  }.property('boundController.status'),
+});
+
+App.NextButton = Em.View.extend({
+  click: function() {
+    this.get('controller').send('next');
+  },
+  tagName: 'button',
+  template: Em.Handlebars.compile('Next Step'),
+  classNames: ['btn'],
+  attributeBindings: ['disabled'],
+  disabled: function() {
+    return this.get('controller.error');
+  }.property('controller.error')
+});
+
+
+})();
+
+(function() {
+
+App.ApplicationController = Em.Controller.extend({
+  needs: ['landing', 'dropbox', 'import', 'traktor', 'push'],
+  actions: { 
+    next: function() {
+      this.transitionToRoute(this.get('controllers.'+this.get('currentRouteName')).nextPath);
+    },
+  },
+  error: function() {
+    return this.controllers.filterBy('status', 'error').get('length') > 0;
+  }.property('controllers.@each.status')
+});
+
+
+})();
+
+(function() {
+
+App.ImportController = Em.Controller.extend({
+  nextPath: 'tracktor',
+  status: null,
+});
+
+
+})();
+
+(function() {
+
+App.MessagesController = Em.ArrayController.extend({
+  addMessages: function(messages) {
+    var self = this;
+    messages.forEach(function(message) {
+      if (!self.findProperty('message', message.message)) {
+        self.unshiftObject(App.Message.create({
+          message: message.message,
+          error: (message.status === 'error'),
+          success: (message.status === 'success'),
+          warning: (message.status === 'warning')
+        }));
+      }
+    });
+  },
+  getMessages: function(resource) {
+    var self = this;
+    return $.getJSON(resource, function(response) {
+      var messages = Em.A();
+      response.messages.forEach(function(message) {
+        self.unshiftObject(App.Message.create({
+          message: message.message,
+          error: (message.status === 'error'),
+          success: (message.status === 'success'),
+          warning: (message.status === 'warning')
+        }));
+      });
+    });
+  }
+});
+
+
+
+})();
+
+(function() {
+
+App.PushController = Em.Controller.extend({
+  nextPath: 'success',
+  status: null,
+});
+
+
+})();
+
+(function() {
+
+App.WhitelistController = Em.ArrayController.extend({
+  isSearching: false,
+  displayContent: Em.A(),
+  actions: {
+    query: function() {
+      var searchPhrase = this.get('searchPhrase').toUpperCase();
+      if (searchPhrase.length < 2) {
+        this.set('isSearching', false);
+      } else {
+        this.set('isSearching', true);
+        var result = this.content.filter(function(artist) {
+          return artist.toUpperCase().indexOf(searchPhrase) !== -1;
+        });
+        this.set('displayContent', result);
+      }
+    },
+  }
+});
+
+
+})();
+
+(function() {
+
+App.DropboxController = Em.ArrayController.extend({
+  needs: ['application', 'whitelist'],
+  nextPath: 'import',
+  status: null,
+});
+
+
+})();
+
+(function() {
+
+App.LandingController = Em.Controller.extend({
+  nextPath: 'dropbox',
+});
+
+
+})();
+
+(function() {
+
+App.NavController = Em.Controller.extend({
+  needs: ['dropbox', 'import', 'traktor', 'push'],
+});
+
+
+})();
+
+(function() {
+
+App.TraktorController = Em.Controller.extend({
+  nextPath: 'push',
+  status: null
+});
+
+
+})();

@@ -121,6 +121,7 @@ class ImportAlbums(Resource):
 
                     albums.append(albm)
                 except Exception, e:
+                    error_count += 1
                     logging.exception(e)
 
         except analyzer.InvalidFileError, ex:
@@ -173,9 +174,9 @@ class ImportAlbums(Resource):
 
             return {'albums': albums}
 
-    def get(self):
+    def get(self, dropbox_path=None):
         # do_dump_new_artists_in_dropbox --rewrite
-        drop = dropbox.Dropbox()
+        drop = dropbox.Dropbox(dropbox_path=dropbox_path)
         new_artists = set()
         for au_file in drop.tracks():
             try:
@@ -184,21 +185,25 @@ class ImportAlbums(Resource):
                     new_artists.add(tpe1)
             except Exception, e:
                 logging.exception(e)
+                raise
         to_print = list(new_artists)
         to_print.extend(artists.all())
         to_print.sort(key=artists.sort_key)
+        print app.config['DEV']
         if not app.config['DEV']:
             output = codecs.open(artists._WHITELIST_FILE, "w", "utf-8")
+            print artists._WHITELIST_FILE
+            raw_input()
             for tpe1 in to_print:
                 output.write(tpe1)
                 output.write("\n")
 
             if new_artists:
-                update_git.update()
+                #update_git.update()
                 logging.info('Artists whitelist pushed to Github')
 
         # reload artists module to repopulate global artists whitelist cache
         reload(artists)
 
-        inbox = dropbox.Dropbox()
-        return self.import_albums(inbox)
+        #inbox = dropbox.Dropbox()
+        return self.import_albums(drop)
