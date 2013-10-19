@@ -6,17 +6,60 @@ module.exports = function(grunt) {
       compile: {
         options: {
           amd: false,
-          templateBasePath: /app\/static\/hbs\//
+          templateBasePath: /client\/app\/templates\//
         },
         files: {
-          "app/static/js/result.js": "app/static/hbs/*.handlebars",
+          "client/app/templates/result.js": "client/app/templates/*.handlebars",
         }
       }
+    },
+    neuter: {
+      options: {
+        includeSourceURL: true
+      },
+      // testing
+      'client/test/application.js': 'client/app/application.js',
+      // production
+      'server/static/js/application.js': 'client/app/application.js'
+    },
+    qunit: {
+      all: {
+        options: {
+          urls: ['http://localhost:9000/test/runner.html']
+        }
+      }
+    },
+    connect: {
+      server: {
+        options: {
+          port: 9000,
+          base: 'client'
+        },
+      }
+    },
+    build_test_runner_file: {
+      all: ['client/test/*_test.js']
     }
-});
+  });
 
   grunt.loadNpmTasks('grunt-ember-templates');
-  
-  grunt.registerTask('default', ['emberTemplates']);
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-neuter');
+
+  grunt.registerMultiTask('build_test_runner_file', 'Creates a test runner file.', function(){
+    var template = grunt.file.read('client/test/runner.html.template');
+    var renderingContext = {
+      data: {
+        files: this.filesSrc.map(function(fileSrc){
+          return fileSrc.replace('client', '');
+        })
+      }
+    };
+    grunt.file.write('client/test/runner.html', grunt.template.process(template, renderingContext));
+  }); 
+
+  grunt.registerTask('test', ['emberTemplates', 'build_test_runner_file', 'neuter', 'connect', 'qunit'])
+  grunt.registerTask('default', ['emberTemplates', 'neuter']);
 
 };
