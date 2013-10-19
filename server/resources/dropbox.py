@@ -5,19 +5,20 @@ import re
 
 from flask.ext.restful import Resource
 
-import chirp.library as chirp
+from chirp.library import dropbox
+from chirp.library.album import from_directory, AlbumError
+from chirp.library.artists import standardize
 
 class Dropbox(Resource):
 
     def dump_dropbox(self):
-
-        drop = chirp.dropbox.Dropbox()
+        drop = dropbox.Dropbox()
         albums = []
         for path in sorted(drop._dirs):
             
             try:
-                chirp_albums = chirp.album.from_directory(path, fast=True)
-            except chirp.album.AlbumError, e:
+                chirp_albums = from_directory(path, fast=True)
+            except AlbumError, e:
                 albums.append({
                     'error': True,
                     'path': path,
@@ -32,7 +33,7 @@ class Dropbox(Resource):
                     album['compilation'] = False
                     album['artist'] = alb.artist_name()
                     
-                    if not chirp.artists.standardize(album['artist']):
+                    if not standardize(album['artist']):
                         album['warning'] = True
 
                 album['title'] = alb.title()
