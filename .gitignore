@@ -2,3 +2,5 @@
 *.log
 *.nml
 *.swp
+node_modules/
+archive/
