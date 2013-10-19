@@ -1,0 +1,51 @@
+/* Text */
+body,label,input,button,select,textarea {font-family:"Lucida Grande","Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif;}
+
+/* Frame */
+.ember-application {padding:20px 0 40px;}
+
+/* Left */
+.nav {}
+.nav-tabs > li.nav-header {margin-bottom:7px;padding:3px 15px;}
+.tabs-left > .nav-tabs > li.nav-header a {margin:0;padding:0;background:none;color:inherit;border:0;}
+.tabs-left > .nav-tabs {margin:0 15px 0 14px;border:none;}
+.nav-tabs > li {margin-bottom:0;padding:10px 14px;}
+.nav-tabs div {display:inline;}
+.nav-tabs > li > button.btn {margin-top:2px;padding:4px 11px;}
+/*li [class^="icon-"], .nav li [class^="icon-"], li [class*=" icon-"], .nav li [class*=" icon-"] {padding-left:4px;}*/
+.btn [class^="icon-"].icon-spin, .nav [class^="icon-"].icon-spin, .btn [class*=" icon-"].icon-spin, .nav [class*=" icon-"].icon-spin {display:inline-block;padding:0;margin-left:0;}
+.icon {display: inline-block;}
+.btn.disabled,.btn[disabled]{opacity:0.6;color:#858585;}
+/*li.error-nav {background:none;}*/
+
+
+/* Center */
+.span9 {width:700px;padding-top:35px;margin-left:20px;margin-right:40px;}
+.tab-content{border-left:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc;}
+.table {margin-bottom:0;}
+.table td {padding:7px 0 7px 10px;border-top:1px solid #bbb;}
+.track td {border-top:1px solid #eee;}
+.arrow,.number {width:20px;}
+.arrow:hover {cursor:pointer;}
+.title {width:430px;}
+.artist {width:197px;}
+.end {width:21px;}
+input[type="text"] {height:10px;padding:4px 0;font-size:14px;color:#333;border-radius:0;-moz-border-radius:0;-webkit-border-radius:0;margin:0;position:absolute;}
+input[type="text"] {width:370px;}
+.artist input[type="text"] {width:195px;}
+tr.warning {background-color:#fcf8e3;}
+tr.err {background-color:#f2dede;}
+#remove {cursor:pointer;font-size:13px;}
+
+/* Right */
+.span3 {width:220px;padding-top:35px;margin-left:20px;}
+.artist-search {position:absolute;background:#fff;padding-bottom:5px;}
+.artist-search input {width:210px;padding-left:5px;margin-bottom:5px;}
+.artist-search div {padding-left:6px;}
+ul#messages {list-style-type:none;margin:36px 0 10px;}
+li.error-message,li.success-message,li.warning-message {padding:8px 12px;margin:0 0 10px;border-radius:0;-moz-border-radius:0;-webkit-border-radius:0;word-wrap:break-word;}
+li.success-message {background-color:#dff0d8;}
+li.error-message {background-color:#f2dede;}
+li.warning-message {background-color:#fcf8e3;}
+
+#search-result {padding-top: 25px;}
