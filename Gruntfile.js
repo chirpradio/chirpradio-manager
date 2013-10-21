@@ -39,12 +39,20 @@ module.exports = function(grunt) {
     },
     build_test_runner_file: {
       all: ['client/test/*_test.js']
+    },
+    watch: {
+      options: {
+        livereload: true
+      },
+      files: ['client/app/**/*', '!client/app/**/result.js'],
+      tasks: ['default'],
     }
   });
 
   grunt.loadNpmTasks('grunt-ember-templates');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-neuter');
 
   grunt.registerMultiTask('build_test_runner_file', 'Creates a test runner file.', function(){
