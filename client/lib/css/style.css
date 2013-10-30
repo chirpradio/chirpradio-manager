@@ -35,7 +35,7 @@ input[type="text"] {width:370px;}
 .artist input[type="text"] {width:195px;}
 tr.warning {background-color:#fcf8e3;}
 tr.err {background-color:#f2dede;}
-#remove {cursor:pointer;font-size:13px;}
+.remove {cursor:pointer;font-size:13px;}
 
 /* Right */
 .span3 {width:220px;padding-top:35px;margin-left:20px;}
