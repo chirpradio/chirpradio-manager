@@ -3,26 +3,25 @@ App.DropboxRoute = Em.Route.extend({
     return Em.$.getJSON('/dropbox');
   },
   setupController: function(controller, model) {
-    
     model.forEach(function(album) {
+
+      // check albums for errors
       if (album.error) {
         controller.set('status', 'error');
       }
-      if (album.warning) {
-        controller.set('status', 'warning');
-      }
     });
-    
+   
+    // set done status if no album errors
     if (!(controller.get('status') === 'error')) {
       controller.set('status', 'done');
     }
 
     // setup whitelist
-    var self = this;
-    Em.$.getJSON('/whitelist', function(response) {
-      self.controllerFor('whitelist').set('content', response);
-    });
-
+    //var self = this;
+    //Em.$.getJSON('/whitelist', function(response) {
+    //  self.controllerFor('whitelist').set('content', response);
+    //});
+    
     controller.set('model', model);
 
   },
