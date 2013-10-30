@@ -5,7 +5,11 @@
     <td class="arrow">{{view App.ToggleView}}</td>
     <td class="album-title title">{{title}}</td>
     <td class="artist">{{artist}}</td>
+    {{#if error}}
+      {{view App.RemoveView contentBinding=this}}
+    {{else}}
     <td class="end"></td>
+    {{/if}}
   </tr>
   {{#if view.open}}
     {{#with artist as artist}}

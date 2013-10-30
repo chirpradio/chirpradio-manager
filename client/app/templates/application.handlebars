@@ -4,6 +4,9 @@
     {{outlet}}
   </div>
   <div class="span3">
+  {{#if showWhitelist}}
   {{render whitelist}}
+  {{/if}}
+  {{render messages}}
   </div>
 </div>
