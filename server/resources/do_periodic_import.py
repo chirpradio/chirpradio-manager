@@ -1,6 +1,5 @@
 import codecs
 import os
-import subprocess
 
 from flask.ext.restful import Resource
 
@@ -151,12 +150,18 @@ class ImportAlbums(Resource):
         
         message = "Import complete. OK!"
         Messages.add_message(message, 'success')
-        
-        exit_status = subprocess.call('sudo `which empty_dropbox`', shell=True)
-        if exit_status == 0:
-            message = "Dropbox cleared. OK!"
-            Messages.add_message(message, 'success')
+       
+        # empty dropbox 
+        for dir in os.listdir(conf.MUSIC_DROPBOX):
+            if dir.startswith('.'):
+                continue
+            fn = os.path.join(conf.MUSIC_DROPBOX, dir)
+            if not os.path.isdir(fn):
+                continue
+            shutil.rmtree(fn)
 
+        message = "Dropbox emptied. OK!"
+        Messages.add_message(message, 'success')
      
         current_route.CURRENT_ROUTE = 'generate'
 
