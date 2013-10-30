@@ -18,14 +18,19 @@ App.StatusIcon = Em.View.extend({
 });
 
 App.NextButton = Em.View.extend({
-  click: function() {
+  click: function(event) {
+
+    // ask application controller to transition to the next route
     this.get('controller').send('next');
+
+    // remove focus from button
+    event.target.blur();
   },
   tagName: 'button',
   template: Em.Handlebars.compile('Next Step'),
   classNames: ['btn'],
   attributeBindings: ['disabled'],
   disabled: function() {
-    return this.get('controller.error');
+    return this.get('controller.error') || this.get('controller.working');
   }.property('controller.error')
 });
