@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <title>Webcontrol</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/normalize.css">
-    <link rel="stylesheet" href="/static/css/bootstrap.css">
-    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/lib/css/normalize.css">
+    <link rel="stylesheet" href="/lib/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/lib/css/style.css">
+    <link rel="stylesheet" href="/lib/css/qunit-1.12.0.css">
     <link rel="icon" type="image/ico" href="/static/img/favicon.ico">
   </head>
   <body>
@@ -22,8 +23,11 @@
     <script type="text/javascript" src="/lib/js/handlebars-1.0.0.js"></script>
     <script type="text/javascript" src="/lib/js/ember-1.0.0.js"></script>
     <script type="text/javascript" src="/lib/js/qunit-1.12.0.js"></script>
+    <script type="text/javascript" src="/lib/js/jquery.mockjax.js"></script>
     
+    <script type="text/javascript" src="/test/testdata/album.json"></script>
     <script type="text/javascript" src="/test/application.js"></script>
+    <script type="text/javascript" src="/test/common.js"></script>
 
     <% _.each(files, function(filepath) { %>
     <script type="text/javascript" src="<%= filepath %>"></script>

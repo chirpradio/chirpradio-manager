@@ -1,0 +1,124 @@
+var testAlbum = [
+    {
+        "artist": "Wilco", 
+        "compilation": false, 
+        "path": "/Users/mcf/src/chirp/share/public/public/Departments/Music Dept/New Music Dropbox/A Ghost Is Born", 
+        "title": "A Ghost Is Born", 
+        "tracks": [
+            {
+                "number": "1", 
+                "title": "At Least That's What You Said"
+            }, 
+            {
+                "number": "2", 
+                "title": "Hell Is Chrome"
+            }, 
+            {
+                "number": "3", 
+                "title": "Spiders (Kidsmoke)"
+            }, 
+            {
+                "number": "4", 
+                "title": "Muzzle of Bees"
+            }, 
+            {
+                "number": "5", 
+                "title": "Hummingbird"
+            }, 
+            {
+                "number": "6", 
+                "title": "Handshake Drugs"
+            }, 
+            {
+                "number": "7", 
+                "title": "Wishful Thinking"
+            }, 
+            {
+                "number": "8", 
+                "title": "Company in My Back"
+            }, 
+            {
+                "number": "9", 
+                "title": "I'm a Wheel"
+            }, 
+            {
+                "number": "10", 
+                "title": "Theologians"
+            }, 
+            {
+                "number": "11", 
+                "title": "Less Than You Think"
+            }, 
+            {
+                "number": "12", 
+                "title": "The Late Greats"
+            }
+        ]
+    }
+]
+
+var testAlbumError = [
+    {
+        "artist": "Wilco", 
+        "compilation": false, 
+        "error": true,
+        "messages": [
+            {
+                "message": "There was an error reading this album",
+                "status": "error",
+            }
+        ],
+        "path": "/Users/mcf/src/chirp/share/public/public/Departments/Music Dept/New Music Dropbox/A Ghost Is Born", 
+        "title": "A Ghost Is Born", 
+        "tracks": [
+            {
+                "number": "1", 
+                "title": "At Least That's What You Said"
+            }, 
+            {
+                "number": "2", 
+                "title": "Hell Is Chrome"
+            }, 
+            {
+                "number": "3", 
+                "title": "Spiders (Kidsmoke)"
+            }, 
+            {
+                "number": "4", 
+                "title": "Muzzle of Bees"
+            }, 
+            {
+                "number": "5", 
+                "title": "Hummingbird"
+            }, 
+            {
+                "number": "6", 
+                "title": "Handshake Drugs"
+            }, 
+            {
+                "number": "7", 
+                "title": "Wishful Thinking"
+            }, 
+            {
+                "number": "8", 
+                "title": "Company in My Back"
+            }, 
+            {
+                "number": "9", 
+                "title": "I'm a Wheel"
+            }, 
+            {
+                "number": "10", 
+                "title": "Theologians"
+            }, 
+            {
+                "number": "11", 
+                "title": "Less Than You Think"
+            }, 
+            {
+                "number": "12", 
+                "title": "The Late Greats"
+            }
+        ]
+    }
+]
