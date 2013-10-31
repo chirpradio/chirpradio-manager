@@ -41,7 +41,12 @@ App.ImportRoute = Em.Route.extend({
     
     // hide whitelist search    
     this.controllerFor('application').set('showWhitelist', false);
-        
+
+    // grab remaining messages from server
+    var messagesController = this.controllerFor('messages');
+    Em.$.getJSON('/messages', function(response) {
+      messagesController.unshiftObjects(response);
+    });
 
   },
   renderTemplate: function(controller) {
