@@ -1,6 +1,6 @@
 from flask.ext.restful import Resource
 
-CURRENT_ROUTE = 'dropbox'
+CURRENT_ROUTE = 'import'
 
 class GetCurrentRoute(Resource):
 
