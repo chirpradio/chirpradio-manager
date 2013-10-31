@@ -351,15 +351,14 @@ App.ApplicationRoute = Em.Route.extend({
     var messagesController = this.controllerFor('messages');
     function poll() {
       Em.$.getJSON('/messages', function(response) {
-
+        
         // push mesages to ui
         messagesController.unshiftObjects(response);
-
-        // poll every 5 seconds
-        setTimeout(poll, 3000);
       });
     }
-    poll();
+    
+    // poll every 5 seconds
+    setInterval(poll, 3000);
   }
 });
 
@@ -379,21 +378,21 @@ App.DropboxRoute = Em.Route.extend({
     var self = this;
     
     // return promise to delay model loading 
-    return Em.$.getJSON('/current_route', function(response) {
+    //return Em.$.getJSON('/current_route', function(response) {
      
       // call home to make sure the client is on the same step as the server
-      if (transition.targetName === response.route_name) {
+     // if (transition.targetName === response.route_name) {
 
         // set loading status to true before data is ready
         self.controllerFor('dropbox').set('working', true);
 
-      } else {
+      //} else {
 
         // abort and transition to the correct route
-        self.transitionTo(response.route_name);
-      }
+       // self.transitionTo(response.route_name);
+     // }
 
-    });
+   // });
 
   },
   afterModel: function() {
@@ -523,7 +522,12 @@ App.ImportRoute = Em.Route.extend({
     
     // hide whitelist search    
     this.controllerFor('application').set('showWhitelist', false);
-        
+
+    // grab remaining messages from server
+    var messagesController = this.controllerFor('messages');
+    Em.$.getJSON('/messages', function(response) {
+      messagesController.unshiftObjects(response);
+    });
 
   },
   renderTemplate: function(controller) {
