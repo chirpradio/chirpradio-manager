@@ -22,11 +22,13 @@ from pre_import_dropbox_scan import album_to_json
 
 VOLUME_NUMBER = 1
 IMPORT_SIZE_LIMIT = 0.95 * (3 << 30)  # 95% of 3GB.
+IMPORT_TIME_STAMP = None
 
 class ImportAlbums(Resource):
 
     def import_albums(self, inbox):
         prescan_timestamp = timestamp.now()
+        IMPORT_TIME_STAMP = timestamp.now()
         error_count = 0
         album_count = 0
         seen_fp = {}
@@ -48,8 +50,7 @@ class ImportAlbums(Resource):
                 album_count += 1
 
                 # start album_message
-                album_message = "#%d " % album_count
-                album_message += u'"%s"<br>' % alb.title().encode("utf-8")
+                album_message = u'"%s"<br>' % alb.title().encode("utf-8")
                 if alb.tags():
                     album_message += "(%s)" % ", ".join(alb.tags())
                 duration_ms = sum(au.duration_ms for au in alb.all_au_files)

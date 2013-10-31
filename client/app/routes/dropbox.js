@@ -5,12 +5,12 @@ App.DropboxRoute = Em.Route.extend({
     return Em.$.getJSON('/scan_dropbox');
   },
   beforeModel: function(transition) {
-
+    
     var self = this;
     
     // return promise to delay model loading 
     return Em.$.getJSON('/current_route', function(response) {
-      
+     
       // call home to make sure the client is on the same step as the server
       if (transition.targetName === response.route_name) {
 

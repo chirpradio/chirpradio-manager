@@ -4,4 +4,5 @@ App.Router.map(function() {
   this.route('import');
   this.route('generate');
   this.route('push');
+  this.route('success');
 });

@@ -32,5 +32,5 @@ App.NextButton = Em.View.extend({
   attributeBindings: ['disabled'],
   disabled: function() {
     return this.get('controller.error') || this.get('controller.working');
-  }.property('controller.error')
+  }.property('controller.error', 'controller.working')
 });

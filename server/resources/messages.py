@@ -31,7 +31,7 @@ class Messages(object):
         message = cls.make_message(message, status)
 
         # add message to the queue
-        cls.messages.append(message)
+        cls.messages.insert(0, message)
 
 
 class GetMessages(Resource):

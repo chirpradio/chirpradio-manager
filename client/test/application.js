@@ -240,7 +240,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashContexts = {'resource': depth0};
   hashTypes = {'resource': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.StatusIcon", {hash:{
-    'resource': ("traktor")
+    'resource': ("generate")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</li>\n  <li>4. Push Tracks to DJ Database");
   hashContexts = {'resource': depth0};
@@ -353,7 +353,7 @@ App.ApplicationRoute = Em.Route.extend({
       Em.$.getJSON('/messages', function(response) {
 
         // push mesages to ui
-        messagesController.pushObjects(response);
+        messagesController.unshiftObjects(response);
 
         // poll every 5 seconds
         setTimeout(poll, 3000);
@@ -375,12 +375,12 @@ App.DropboxRoute = Em.Route.extend({
     return Em.$.getJSON('/scan_dropbox');
   },
   beforeModel: function(transition) {
-
+    
     var self = this;
     
     // return promise to delay model loading 
     return Em.$.getJSON('/current_route', function(response) {
-      
+     
       // call home to make sure the client is on the same step as the server
       if (transition.targetName === response.route_name) {
 
@@ -418,6 +418,60 @@ App.DropboxRoute = Em.Route.extend({
     }
 
     controller.set('model', model);
+  }
+});
+
+
+})();
+
+(function() {
+
+App.GenerateRoute = Em.Route.extend({
+  model: function() {
+
+    // generate nml file
+    return Em.$.getJSON('/generate');
+  },
+  beforeModel: function(transition) {
+
+    var self = this;
+    
+    // return promise to delay model loading 
+    return Em.$.getJSON('/current_route', function(response) {
+      
+      // call home to make sure the client is on the same step as the server
+      if (transition.targetName === response.route_name) {
+
+        // make sure previous routes are marked done
+        self.controllerFor('dropbox').set('working', false);
+        self.controllerFor('import').set('working', false);
+
+        // set loading status to true before data is ready
+        self.controllerFor('generate').set('working', true);
+
+      } else {
+
+        // abort and transition to the correct route
+        self.transitionTo(response.route_name);
+      }
+    });
+
+  },
+  afterModel: function() {
+  
+    // set loading status to true before data is ready
+    this.controllerFor('generate').set('working', false);
+
+    // hide whitelist
+    this.controllerFor('application').set('showWhitelist', false);
+
+  },
+  renderTemplate: function() {
+
+    // use dropbox template and import controller
+    this.render('dropbox', {
+      controller: 'import'
+    });
   }
 });
 
@@ -479,6 +533,7 @@ App.ImportRoute = Em.Route.extend({
       controller: controller
     });
 
+    // adjust message position when loaded
     var view = App.AdjustMessagesView.create();
     view.append();
   }
@@ -502,11 +557,68 @@ App.IndexRoute = Em.Route.extend({
 
 (function() {
 
+App.PushRoute = Em.Route.extend({
+  model: function() {
+
+    // generate nml file
+    return Em.$.getJSON('/push');
+  },
+  beforeModel: function(transition) {
+
+    var self = this;
+    
+    // return promise to delay model loading 
+    return Em.$.getJSON('/current_route', function(response) {
+      
+      // call home to make sure the client is on the same step as the server
+      if (transition.targetName === response.route_name) {
+
+        // make sure previous routes are marked done
+        self.controllerFor('dropbox').set('working', false);
+        self.controllerFor('import').set('working', false);
+        self.controllerFor('generate').set('working', false);
+
+        // set loading status to true before data is ready
+        self.controllerFor('push').set('working', true);
+
+      } else {
+
+        // abort and transition to the correct route
+        self.transitionTo(response.route_name);
+      }
+    });
+
+  },
+  afterModel: function() {
+  
+    // set loading status to true before data is ready
+    this.controllerFor('push').set('working', false);
+
+    // hide whitelist
+    this.controllerFor('application').set('showWhitelist', false);
+
+  },
+  renderTemplate: function() {
+
+    // use dropbox template and import controller
+    this.render('dropbox', {
+      controller: 'import'
+    });
+  }
+});
+
+
+})();
+
+(function() {
+
 App.Router.map(function() {
   this.route('landing');
   this.route('dropbox');
   this.route('import');
   this.route('generate');
+  this.route('push');
+  this.route('success');
 });
 
 
@@ -654,7 +766,7 @@ App.NextButton = Em.View.extend({
   attributeBindings: ['disabled'],
   disabled: function() {
     return this.get('controller.error') || this.get('controller.working');
-  }.property('controller.error')
+  }.property('controller.error', 'controller.working')
 });
 
 
@@ -674,7 +786,7 @@ App.WhitelistView = Em.View.extend({
 (function() {
 
 App.ApplicationController = Em.Controller.extend({
-  needs: ['landing', 'dropbox', 'import', 'traktor', 'push'],
+  needs: ['landing', 'dropbox', 'import', 'generate', 'push'],
   showWhitelist: null,
   actions: { 
     next: function() {
@@ -717,9 +829,31 @@ App.DropboxController = Em.ArrayController.extend({
 
 (function() {
 
+App.GenerateController = Em.Controller.extend({
+  //needs: ['application', 'messages'],
+  nextPath: 'push',
+  status: function() {
+
+    if (this.get('working')) {
+      return 'working';
+    } else if (this.get('working') === false) {
+      return 'done';
+    } else {
+      return null;
+    }
+
+  }.property('working'),
+  working: null,
+});
+
+
+})();
+
+(function() {
+
 App.ImportController = Em.ArrayController.extend({
   needs: ['application', 'messages'],
-  nextPath: 'tracktor',
+  nextPath: 'generate',
   // will return 'error' if an album with an error is present.
   status: function() {
 
@@ -759,24 +893,24 @@ App.MessagesController = Em.ArrayController.extend();
 (function() {
 
 App.NavController = Em.Controller.extend({
-  needs: ['dropbox', 'import', 'traktor', 'push'],
+  needs: ['dropbox', 'import', 'generate', 'push'],
   error: function() {
     return this.get('controllers.dropbox.status') === 'error'
         || this.get('controllers.import.status') === 'error'
-        || this.get('controllers.traktor.status') === 'error'
+        || this.get('controllers.generate.status') === 'error'
         || this.get('controllers.push.status');
   }.property('controllers.dropbox.status'
            , 'controllers.import.status'
-           , 'controllers.traktor.status'
+           , 'controllers.generate.status'
            , 'controllers.push.status'),
   working: function() {
     return this.get('controllers.dropbox.status') === 'working'
         || this.get('controllers.import.status') === 'working'
-        || this.get('controllers.traktor.status') === 'working'
+        || this.get('controllers.generate.status') === 'working'
         || this.get('controllers.push.status');
   }.property('controllers.dropbox.status'
            , 'controllers.import.status'
-           , 'controllers.traktor.status'
+           , 'controllers.generate.status'
            , 'controllers.push.status')
 });
 
@@ -786,18 +920,20 @@ App.NavController = Em.Controller.extend({
 (function() {
 
 App.PushController = Em.Controller.extend({
+  //needs: ['application', 'messages'],
   nextPath: 'success',
-  status: null,
-});
+  status: function() {
 
+    if (this.get('working')) {
+      return 'working';
+    } else if (this.get('working') === false) {
+      return 'done';
+    } else {
+      return null;
+    }
 
-})();
-
-(function() {
-
-App.TraktorController = Em.Controller.extend({
-  nextPath: 'push',
-  status: null
+  }.property('working'),
+  working: null,
 });
 
 

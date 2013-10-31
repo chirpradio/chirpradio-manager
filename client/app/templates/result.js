@@ -230,7 +230,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   hashContexts = {'resource': depth0};
   hashTypes = {'resource': "STRING"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.StatusIcon", {hash:{
-    'resource': ("traktor")
+    'resource': ("generate")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("</li>\n  <li>4. Push Tracks to DJ Database");
   hashContexts = {'resource': depth0};
