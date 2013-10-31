@@ -50,7 +50,7 @@ class ScanDropbox(Resource):
             try:
                 chirp_albums = chirp.library.album.from_directory(path, fast=True)
             except chirp.library.album.AlbumError, e:
-                Messages.add_message('error', 'There was an error at %s.' % path)
+                Messages.add_message('There was an error at %s.' % path, 'error')
                 continue
 
             # build albums

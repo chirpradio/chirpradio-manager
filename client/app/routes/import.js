@@ -51,6 +51,7 @@ App.ImportRoute = Em.Route.extend({
       controller: controller
     });
 
+    // adjust message position when loaded
     var view = App.AdjustMessagesView.create();
     view.append();
   }

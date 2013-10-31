@@ -1,6 +1,6 @@
 App.ImportController = Em.ArrayController.extend({
   needs: ['application', 'messages'],
-  nextPath: 'tracktor',
+  nextPath: 'generate',
   // will return 'error' if an album with an error is present.
   status: function() {
 

@@ -1,11 +1,12 @@
 import codecs
 import os
+import shutil
 
 from flask.ext.restful import Resource
 
 from chirp.common import timestamp
 from chirp.common.conf import (LIBRARY_PREFIX, LIBRARY_DB,
-                                   LIBRARY_TMP_PREFIX)
+                                   LIBRARY_TMP_PREFIX, MUSIC_DROPBOX)
 from chirp.library import album
 from chirp.library import analyzer
 from chirp.library import artists
@@ -152,10 +153,10 @@ class ImportAlbums(Resource):
         Messages.add_message(message, 'success')
        
         # empty dropbox 
-        for dir in os.listdir(conf.MUSIC_DROPBOX):
+        for dir in os.listdir(MUSIC_DROPBOX):
             if dir.startswith('.'):
                 continue
-            fn = os.path.join(conf.MUSIC_DROPBOX, dir)
+            fn = os.path.join(MUSIC_DROPBOX, dir)
             if not os.path.isdir(fn):
                 continue
             shutil.rmtree(fn)

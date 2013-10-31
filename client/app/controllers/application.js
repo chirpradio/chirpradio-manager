@@ -1,5 +1,5 @@
 App.ApplicationController = Em.Controller.extend({
-  needs: ['landing', 'dropbox', 'import', 'traktor', 'push'],
+  needs: ['landing', 'dropbox', 'import', 'generate', 'push'],
   showWhitelist: null,
   actions: { 
     next: function() {
