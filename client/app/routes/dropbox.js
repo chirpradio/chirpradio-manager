@@ -15,6 +15,12 @@ App.DropboxRoute = Em.Route.extend({
     // set loading status to false after data is ready
     this.controllerFor('dropbox').set('working', false);
 
+    // grab remaining messages from server
+    var messageController = this.controllerFor('messages');
+    Em.$.getJSON('/messages', function(response) {
+      messageController.unshiftObjects(response);
+    });
+
   },
   setupController: function(controller, model) {
      

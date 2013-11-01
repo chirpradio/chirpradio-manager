@@ -37,6 +37,12 @@ App.GenerateRoute = Em.Route.extend({
     // hide whitelist
     this.controllerFor('application').set('showWhitelist', false);
 
+    // grab remaining messages from server
+    var messageController = this.controllerFor('messages');
+    Em.$.getJSON('/messages', function(response) {
+      messageController.unshiftObjects(response);
+    });
+
   },
   renderTemplate: function() {
 
