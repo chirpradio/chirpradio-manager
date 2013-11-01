@@ -375,30 +375,20 @@ App.DropboxRoute = Em.Route.extend({
   },
   beforeModel: function(transition) {
     
-    var self = this;
-    
-    // return promise to delay model loading 
-    //return Em.$.getJSON('/current_route', function(response) {
-     
-      // call home to make sure the client is on the same step as the server
-     // if (transition.targetName === response.route_name) {
-
-        // set loading status to true before data is ready
-        self.controllerFor('dropbox').set('working', true);
-
-      //} else {
-
-        // abort and transition to the correct route
-       // self.transitionTo(response.route_name);
-     // }
-
-   // });
+    // set loading status to true before data is ready
+    this.controllerFor('dropbox').set('working', true);
 
   },
   afterModel: function() {
   
-    // set loading status to true before data is ready
+    // set loading status to false after data is ready
     this.controllerFor('dropbox').set('working', false);
+
+    // grab remaining messages from server
+    var messageController = this.controllerFor('messages');
+    Em.$.getJSON('/messages', function(response) {
+      messageController.unshiftObjects(response);
+    });
 
   },
   setupController: function(controller, model) {
@@ -413,11 +403,12 @@ App.DropboxRoute = Em.Route.extend({
 
     // no albums in dropbox
     if (model.length === 0) {
-      controller.set('working', null);
+      controller.set('error', true);
     }
 
     controller.set('model', model);
-  }
+  },
+
 });
 
 
@@ -463,6 +454,12 @@ App.GenerateRoute = Em.Route.extend({
 
     // hide whitelist
     this.controllerFor('application').set('showWhitelist', false);
+
+    // grab remaining messages from server
+    var messageController = this.controllerFor('messages');
+    Em.$.getJSON('/messages', function(response) {
+      messageController.unshiftObjects(response);
+    });
 
   },
   renderTemplate: function() {
@@ -601,6 +598,12 @@ App.PushRoute = Em.Route.extend({
     // hide whitelist
     this.controllerFor('application').set('showWhitelist', false);
 
+    // grab remaing messages from server
+    var messageController = this.controllerFor('messages');
+    Em.$.getJSON('/messages', function(responst) {
+      messageController.unshiftObjects(response);
+    });
+
   },
   renderTemplate: function() {
 
@@ -652,13 +655,18 @@ App.ToggleView = Em.View.extend({
   tagName: 'i',
   classNameBindings: ['toggle'],
   click: function() {
+
+    // open property of album
     var open = this.get('parentView.open');
+
+    // close each album
     this.get('parentView.parentView.childViews').forEach(function(albumView) {
       albumView.set('open', false);
     });
-    if (!open) {
-      this.set('parentView.open', !this.get('parentView.open'));
-    }
+
+    // set album to opposite of open
+    if (!open) this.set('parentView.open', !this.get('parentView.open'));
+
   },
   toggle: function() { 
     return 'icon-arrow-' + (this.get('parentView.open') ? 'down' : 'right');
@@ -671,20 +679,22 @@ App.RemoveView = Em.View.extend({
   template: Em.Handlebars.compile('✕'),
   click: function() {
      
-    var content = this.get('content');
-    var albumPath = content.path
-    var controller = this.get('controller');
+    var content = this.get('content'),
+        controller = this.get('controller'),
+        albumPath = this.get('content.path');
     
     $.ajax({
       url: '/remove_album',
       type: 'POST',
-      data: {path: JSON.stringify(albumPath)},
+      data: {
+        path: JSON.stringify(albumPath)
+      },
       success: function(response) {
        
-        // explicit run for debugging 
+        // explicit run for testing
         Em.run(function() {
 
-          if (response.success)
+          if (response.success) {
 
             // remove album from array
             controller.removeObject(content);
@@ -695,15 +705,19 @@ App.RemoveView = Em.View.extend({
               // clear messages
               controller.get('controllers.messages.content').clear();
 
+              // set working status, activate spinner
               controller.set('working', true);
 
               // reload the current route
+              // TODO should not hardcode resource
+              // TODO should set content
               Em.$.getJSON('/import_albums', function() {
 
-                // finished loading
+                // set working status, deactivate spinner
                 controller.set('working', false);
               });
             }
+          }
         });
       }
     })
@@ -790,10 +804,14 @@ App.WhitelistView = Em.View.extend({
 (function() {
 
 App.ApplicationController = Em.Controller.extend({
-  needs: ['landing', 'dropbox', 'import', 'generate', 'push'],
+  needs: ['landing', 'dropbox', 'import', 'generate', 'push', 'messages'],
   showWhitelist: null,
   actions: { 
     next: function() {
+
+      // clear messages from screen
+      this.get('controllers.messages').clear();
+
       // transition to the next route
       this.transitionToRoute(this.get('controllers.'+this.get('currentRouteName')).nextPath);
     },
@@ -814,7 +832,7 @@ App.DropboxController = Em.ArrayController.extend({
   // will return 'error' if an album with an error is present.
   status: function() {
 
-    if (this.findBy('error', true)) {
+    if (this.findBy('error', true) || this.get('error')) {
       return 'error';
     } else if (this.get('working')) {
       return 'working';
@@ -824,7 +842,8 @@ App.DropboxController = Em.ArrayController.extend({
       return null;
     }
 
-  }.property('content.@each.error', 'working'),
+  }.property('content.@each.error', 'working', 'error'),
+  error: null,
   working: null,
 });
 
@@ -900,13 +919,9 @@ App.NavController = Em.Controller.extend({
   needs: ['dropbox', 'import', 'generate', 'push'],
   error: function() {
     return this.get('controllers.dropbox.status') === 'error'
-        || this.get('controllers.import.status') === 'error'
-        || this.get('controllers.generate.status') === 'error'
-        || this.get('controllers.push.status');
+        || this.get('controllers.import.status') === 'error';
   }.property('controllers.dropbox.status'
-           , 'controllers.import.status'
-           , 'controllers.generate.status'
-           , 'controllers.push.status'),
+           , 'controllers.import.status'),
   working: function() {
     return this.get('controllers.dropbox.status') === 'working'
         || this.get('controllers.import.status') === 'working'

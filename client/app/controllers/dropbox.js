@@ -7,7 +7,7 @@ App.DropboxController = Em.ArrayController.extend({
   // will return 'error' if an album with an error is present.
   status: function() {
 
-    if (this.findBy('error', true)) {
+    if (this.findBy('error', true) || this.get('error')) {
       return 'error';
     } else if (this.get('working')) {
       return 'working';
@@ -17,6 +17,7 @@ App.DropboxController = Em.ArrayController.extend({
       return null;
     }
 
-  }.property('content.@each.error', 'working'),
+  }.property('content.@each.error', 'working', 'error'),
+  error: null,
   working: null,
 });

@@ -34,9 +34,10 @@ App.DropboxRoute = Em.Route.extend({
 
     // no albums in dropbox
     if (model.length === 0) {
-      controller.set('working', null);
+      controller.set('error', true);
     }
 
     controller.set('model', model);
-  }
+  },
+
 });
