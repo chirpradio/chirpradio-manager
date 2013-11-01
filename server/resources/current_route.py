@@ -1,5 +1,7 @@
 from flask.ext.restful import Resource
 
+
+# default start route should be import
 CURRENT_ROUTE = 'import'
 
 class GetCurrentRoute(Resource):
