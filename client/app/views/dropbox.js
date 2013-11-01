@@ -50,6 +50,13 @@ App.RemoveView = Em.View.extend({
             // remove album from array
             controller.removeObject(content);
 
+            // grab message from server
+            // TODO move to message controller action
+            var messageController = controller.get('controllers.messages');
+            Em.$.getJSON('/messages', function(response) {
+              messageController.unshiftObjects(response);
+            });
+
             // if all errors are gone
             if (!(controller.get('status') === 'error')) {
 
