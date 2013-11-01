@@ -6,13 +6,18 @@ App.ToggleView = Em.View.extend({
   tagName: 'i',
   classNameBindings: ['toggle'],
   click: function() {
+
+    // open property of album
     var open = this.get('parentView.open');
+
+    // close each album
     this.get('parentView.parentView.childViews').forEach(function(albumView) {
       albumView.set('open', false);
     });
-    if (!open) {
-      this.set('parentView.open', !this.get('parentView.open'));
-    }
+
+    // set album to opposite of open
+    if (!open) this.set('parentView.open', !this.get('parentView.open'));
+
   },
   toggle: function() { 
     return 'icon-arrow-' + (this.get('parentView.open') ? 'down' : 'right');
@@ -25,20 +30,22 @@ App.RemoveView = Em.View.extend({
   template: Em.Handlebars.compile('✕'),
   click: function() {
      
-    var content = this.get('content');
-    var albumPath = content.path
-    var controller = this.get('controller');
+    var content = this.get('content'),
+        controller = this.get('controller'),
+        albumPath = this.get('content.path');
     
     $.ajax({
       url: '/remove_album',
       type: 'POST',
-      data: {path: JSON.stringify(albumPath)},
+      data: {
+        path: JSON.stringify(albumPath)
+      },
       success: function(response) {
        
-        // explicit run for debugging 
+        // explicit run for testing
         Em.run(function() {
 
-          if (response.success)
+          if (response.success) {
 
             // remove album from array
             controller.removeObject(content);
@@ -49,15 +56,19 @@ App.RemoveView = Em.View.extend({
               // clear messages
               controller.get('controllers.messages.content').clear();
 
+              // set working status, activate spinner
               controller.set('working', true);
 
               // reload the current route
+              // TODO should not hardcode resource
+              // TODO should set content
               Em.$.getJSON('/import_albums', function() {
 
-                // finished loading
+                // set working status, deactivate spinner
                 controller.set('working', false);
               });
             }
+          }
         });
       }
     })
