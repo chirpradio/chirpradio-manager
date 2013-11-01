@@ -1,6 +1,7 @@
 import codecs
 import os
 import shutil
+import subprocess
 
 from flask.ext.restful import Resource
 
@@ -201,7 +202,31 @@ class ImportAlbums(Resource):
             message += "<br>".join(list(new_artists))
             Messages.add_message(message, 'success')
 
+    def push_to_github(self):
+        """ Push changes to the artist-whitelist to CHIRP Github 
+
+        git-dir and work-tree must be specified because we are operating outside
+        of the repo directory.
+
+        TODO: remove abs paths
+        """
+        git_dir = '/Users/mcf/src/chirp/chirpradio-machine/.git'
+        work_tree = '/Users/mcf/src/chirp/chirpradio-machine'
+
+        # commit changes
+        commit_command = 'git --git-dir=%s --work-tree=%s commit %s -m "Adding new artists"' % (
+            git_dir, work_tree, artists._WHITELIST_FILE,
+        )
+        commit_output = subprocess.check_output(commit_command, shell=True, stderr=subprocess.STDOUT)
+        Messages.add_message(commit_output, 'success')
+        
+        # push changes
+        push_command = 'git --git-dir=%s --work-tree=%s push' % (git_dir, work_tree)
+        push_output = subprocess.check_output(push_command, shell=True, stderr=subprocess.STDOUT)
+        Messages.add_message(push_output, 'success')
+
     def get(self):
         self.add_artists()
+        self.push_to_github()
         inbox = dropbox.Dropbox()
         return self.import_albums(inbox)
