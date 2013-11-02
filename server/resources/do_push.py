@@ -76,15 +76,13 @@ class Push(Resource):
 
 
     def do_push(self):
-        
+
+        # IMPORT_TIME_STAMP from import step        
         START_TIMESTAMP = IMPORT_TIME_STAMP
         # TODO(trow): Is this optimal?
         _NUM_ALBUMS_PER_FLUSH = 3
 
         _DISC_NUM_RE = re.compile("disc\s+(\d+)", re.IGNORECASE)
-
-
-        DRY_RUN = False
 
         class UnknownArtistError(Exception):
             pass
@@ -170,9 +168,6 @@ class Push(Resource):
         def flush(list_of_pending_albums):
             if not list_of_pending_albums:
                 return
-            if DRY_RUN:
-                print "Dry run -- skipped flush"
-                return
             idx = search.Indexer()
             for alb in list_of_pending_albums:
                 process_one_album(idx, alb)
@@ -228,7 +223,10 @@ class Push(Resource):
             this_album = []
         flush(pending_albums)
         
-        Messages.add_message('Album push complete. OK!', 'warning')
+        Messages.add_message('Album push complete. OK!', 'success')
+        Messages.add_message('Import process complete. OK!', 'success')
+
+        current_route.CURRENT_ROUTE = 'import'
         
     def get(self):
         self.do_push_artists()
