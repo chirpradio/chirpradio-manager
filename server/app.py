@@ -20,7 +20,7 @@ api = restful.Api(app)
 
 
 # setup logging
-handler = RotatingFileHandler('import.log', maxBytes=10000, backupCount=1)
+handler = RotatingFileHandler('import.log', maxBytes=100000, backupCount=1)
 handler.setLevel(logging.INFO)
 app.logger.addHandler(handler)
 
