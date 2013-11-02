@@ -589,7 +589,7 @@ App.PushRoute = Em.Route.extend({
 
     // grab remaing messages from server
     var messageController = this.controllerFor('messages');
-    Em.$.getJSON('/messages', function(responst) {
+    Em.$.getJSON('/messages', function(response) {
       messageController.unshiftObjects(response);
     });
 
