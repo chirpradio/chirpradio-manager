@@ -34,7 +34,7 @@ class ImportAlbums(Resource):
     def import_albums(self, inbox):
         prescan_timestamp = timestamp.now()
 
-        # timestamp will be referenced by push step
+        # timestamp to be referenced by push step
         IMPORT_TIME_STAMP = timestamp.now()
         error_count = 0
         album_count = 0
@@ -51,7 +51,7 @@ class ImportAlbums(Resource):
                 album_response = album_to_json(alb, album_path)
                 
                 # initialize error state
-                # import porcess will halt if an error is seen
+                # import process will halt if an error is seen
                 album_error = False
                
                 alb.drop_payloads()
@@ -80,14 +80,11 @@ class ImportAlbums(Resource):
                 for au in alb.all_au_files:
                     if au.fingerprint in seen_fp:
                         album_message += "<br>***** ERROR: DUPLICATE TRACK WITHIN IMPORT<br>"
-                        #album_message +=  "<br>This one is at: %s<br>" % au.path
-                        #album_message +=  "<br>Other one is at: %s<br>" % seen_fp[au.fingerprint].path
                         collision = True
                         break
                     fp_au_file = db.get_by_fingerprint(au.fingerprint)
                     if fp_au_file is not None:
                         album_message += "<br>***** ERROR: TRACK ALREADY IN LIBRARY"
-                        #album_message += unicode(fp_au_file.mutagen_id3).encode("utf-8")
                         collision = True
                         break
                     seen_fp[au.fingerprint] = au
@@ -133,7 +130,8 @@ class ImportAlbums(Resource):
             message += "Saw %d errors" % error_count
             Messages.add_message(message, 'error')
 
-            # TESTING return albums with errors attached
+            # return albums with errors attached
+            # halt import before data is commited
             return albums
        
         message += "No errors found."
@@ -189,6 +187,8 @@ class ImportAlbums(Resource):
             except:
                 Messages.add_messaage('** file: %r' % au_file.path, 'error')
                 error = True
+                
+                # TODO propagate error to client
                 raise
 
             if artists.standardize(tpe1) is None:
