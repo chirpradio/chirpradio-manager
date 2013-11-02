@@ -14,7 +14,7 @@ class RemoveAlbum(Resource):
     def post(self):
         album_path = parser.parse_args()['path']
         
-        exit_status = subprocess.call('sudo remove_from_dropbox %s' % album_path, shell=True)
+        exit_status = subprocess.call("sudo `which remove_from_dropbox` '%s'" % album_path, shell=True)
         
         if exit_status == 0:
             Messages.add_message('Successfully removed album %s from dropbox.' % album_path, 'success')
