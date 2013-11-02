@@ -14,32 +14,52 @@ from messages import Messages
 
 def album_to_json(album, path):
     """ Takes a chirp library album and path. Returns a dict of album attributes """
-    
+
+    error = False
     result = {}
     result['path'] = path
-    result['title'] = album.title()
+    print path
+    try:
+        result['title'] = album.title().encode('utf-8')
+    except UnicodeDecodeError:
+        error = True
+
     result['compilation'] = album.is_compilation()
-    
+
     if result['compilation']:
         result['artist'] = 'Various Artists'
     else:
-        result['artist'] = album.artist_name()
-    
+        try:
+            result['artist'] = album.artist_name().encode('utf-8')
+            unicode(result['artist'])
+        except UnicodeDecodeError:
+            error = True
+
     # build tracks
     result['tracks'] = []
     for au_file in album.all_au_files:
         track = {}
-        
+
         # extract track number
         track['number'] = re.search('^[0-9]*', au_file.mutagen_id3['TRCK'].text[0]).group(0)
 
-        track['title'] = au_file.tit2()
-       
+        try:
+            track['title'] = au_file.tit2().encode('utf-8')
+        except UnicodeDecodeError:
+            error = True
+
         if result['compilation']:
-            track['artist'] = au_file.tpe1()
+            try:
+                track['artist'] = au_file.tpe1().encode('utf-8')
+            except UnicodeDecodeError:
+                error = True
 
         result['tracks'].append(track)
 
+    if error:
+        result['error'] = True
+        Messages.add_message('There was an error at %s' % path, 'error')
+    print error
     return result
 
 
@@ -59,19 +79,21 @@ class ScanDropbox(Resource):
             # build albums
             for album in chirp_albums:
                 json = album_to_json(album, path)
-                result.append(json) 
+                result.append(json)
 
         # check for new artists
         new_artists = []
         for data in result:
-            if chirp.library.artists.standardize(data['artist']) is None:
-                new_artists.append(data['artist'])
-                data['warning'] = True
+            print data.get('error')
+            if not data.get('error'):
+                if chirp.library.artists.standardize(data['artist']) is None:
+                    new_artists.append(data['artist'])
+                    data['warning'] = True
 
         if new_artists:
             Messages.add_message('New artists in dropbox: %s' % '<br>'.join(new_artists), 'warning')
-       
-        # only progress import process if there are albums in the dropbox 
+
+        # only progress import process if there are albums in the dropbox
         if len(result) > 0:
             current_route.CURRENT_ROUTE = 'import'
 
