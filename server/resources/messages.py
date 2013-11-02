@@ -1,5 +1,8 @@
 from flask.ext.restful import Resource
 
+from flask import current_app
+
+
 class Messages(object):
     
     messages = []
@@ -27,11 +30,16 @@ class Messages(object):
     def add_message(cls, message, status):
         """ creates a mesasge and adds it to the queue """
 
+        log = current_app.logger
+
         # create the message
-        message = cls.make_message(message, status)
+        message_response = cls.make_message(message, status)
 
         # add message to the queue
-        cls.messages.insert(0, message)
+        cls.messages.insert(0, message_response)
+
+        # log message to file TODO more robust solution
+        log.info(message.replace('<br>', '\n'))
 
 
 class GetMessages(Resource):

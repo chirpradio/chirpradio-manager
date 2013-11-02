@@ -1,3 +1,6 @@
+import logging
+from logging.handlers import RotatingFileHandler
+
 import flask
 from flask.ext import restful
 
@@ -10,14 +13,17 @@ from resources.pre_import_dropbox_scan import ScanDropbox
 from resources.remove import RemoveAlbum
 from resources.whitelist import GetWhitelist
 
-# TODO IN_PROCESS
-
-# keep the client in sync
-ERROR = False
 
 # create app and api
 app = flask.Flask(__name__)
 api = restful.Api(app)
+
+
+# setup logging
+handler = RotatingFileHandler('import.log', maxBytes=10000, backupCount=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
+
 
 # register resources
 api.add_resource(GenerateTraktorLibrary, '/generate')       
@@ -28,7 +34,6 @@ api.add_resource(ImportAlbums, '/import_albums')
 api.add_resource(Push, '/push')       
 api.add_resource(RemoveAlbum, '/remove_album')       
 api.add_resource(ScanDropbox, '/scan_dropbox')       
-
 
 # serve client app at root
 @app.route('/')
