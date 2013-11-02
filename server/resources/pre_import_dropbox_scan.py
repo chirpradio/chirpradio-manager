@@ -2,6 +2,8 @@ import re
 
 from flask.ext.restful import Resource
 
+from flask import current_app
+
 import chirp.library.album
 import chirp.library.artists
 import chirp.library.dropbox
@@ -11,17 +13,16 @@ from messages import Messages
 
 
 def album_to_json(album, path):
-    """ Takes a chirp library albumum and path. Returns a dict of albumum attributes """
+    """ Takes a chirp library albumum and path. Returns a dict of album attributes """
     
     result = {}
     result['path'] = path
     result['title'] = album.title()
-
-    if album.is_compilation():
-        result['compilation'] = True
+    result['compilation'] = album.is_compilation()
+    
+    if result['compilation']:
         result['artist'] = 'Various Artists'
     else:
-        result['compilation'] = False
         result['artist'] = album.artist_name()
     
     # build tracks
@@ -44,6 +45,7 @@ def album_to_json(album, path):
 class ScanDropbox(Resource):
 
     def dump_dropbox(self):
+
         drop = chirp.library.dropbox.Dropbox()
         result = []
         for path in sorted(drop._dirs):
@@ -67,7 +69,8 @@ class ScanDropbox(Resource):
 
         if new_artists:
             Messages.add_message('New artists in dropbox: %s' % '<br>'.join(new_artists), 'warning')
-        
+       
+        # only progress import process if there are albums in the dropbox 
         if len(result) > 0:
             current_route.CURRENT_ROUTE = 'import'
 

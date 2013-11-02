@@ -21,14 +21,20 @@ import current_route
 from messages import Messages
 from pre_import_dropbox_scan import album_to_json
 
+from flask import current_app
+
+
 VOLUME_NUMBER = 1
 IMPORT_SIZE_LIMIT = 0.95 * (3 << 30)  # 95% of 3GB.
 IMPORT_TIME_STAMP = None
+
 
 class ImportAlbums(Resource):
 
     def import_albums(self, inbox):
         prescan_timestamp = timestamp.now()
+
+        # timestamp will be referenced by push step
         IMPORT_TIME_STAMP = timestamp.now()
         error_count = 0
         album_count = 0
@@ -36,10 +42,11 @@ class ImportAlbums(Resource):
         albums = []
 
         db = database.Database(LIBRARY_DB)
+
         try:
             for alb in inbox.albums():
 
-                # generate response)
+                # generate response
                 album_path = os.path.dirname(alb.all_au_files[0].path)
                 album_response = album_to_json(alb, album_path)
                 
@@ -52,8 +59,10 @@ class ImportAlbums(Resource):
 
                 # start album_message
                 album_message = u'"%s"<br>' % alb.title().encode("utf-8")
+
                 if alb.tags():
                     album_message += "(%s)" % ", ".join(alb.tags())
+
                 duration_ms = sum(au.duration_ms for au in alb.all_au_files)
                 if alb.is_compilation():
                     album_message += "Compilation<br>"
@@ -61,7 +70,7 @@ class ImportAlbums(Resource):
                         album_message += "  %02d:" % (i+1,)
                         album_message +=  unicode(au.mutagen_id3["TPE1"]).encode("utf-8")
                 else:
-                    album_message += alb.artist_name()#.encode("utf-8") #TODO
+                    album_message += alb.artist_name().encode("utf-8")
                 album_message += "<br>%d tracks / %d minutes<br>" % (
                     len(alb.all_au_files), int(duration_ms / 60000))
                 album_message += "ID=%015x<br>" % alb.album_id
@@ -171,7 +180,6 @@ class ImportAlbums(Resource):
         return albums
 
     def add_artists(self):
-
         error = False
         drop = dropbox.Dropbox()
         new_artists = set()
@@ -181,6 +189,7 @@ class ImportAlbums(Resource):
             except:
                 Messages.add_messaage('** file: %r' % au_file.path, 'error')
                 error = True
+                raise
 
             if artists.standardize(tpe1) is None:
                 new_artists.add(tpe1)
@@ -198,9 +207,13 @@ class ImportAlbums(Resource):
 
             # reload whitelist from file
             artists._init()
+            
             message = "Artist whitelist updated.<br>New artists added:<br>"
             message += "<br>".join(list(new_artists))
             Messages.add_message(message, 'success')
+
+            # push to github
+            self.push_to_github()
 
     def push_to_github(self):
         """ Push changes to the artist-whitelist to CHIRP Github 
@@ -227,6 +240,5 @@ class ImportAlbums(Resource):
 
     def get(self):
         self.add_artists()
-        self.push_to_github()
         inbox = dropbox.Dropbox()
         return self.import_albums(inbox)
