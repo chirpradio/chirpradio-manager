@@ -12,16 +12,14 @@
     {{/if}}
   </tr>
   {{#if view.open}}
-    {{#with artist as artist}}
-      {{#each tracks}}
+    {{#each tracks}}
   <tr class="track">
     <td class="number">{{number}}</td>
     <td class="title">{{title}}</td>
     <td class="artist">{{artist}}</td>
     <td class="end"></td>
   </tr>
-      {{/each}}
-    {{/with}}
+    {{/each}}
   {{/if}}
 {{/view}}
 {{/each}}
