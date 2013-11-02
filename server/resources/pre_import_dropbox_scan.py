@@ -13,7 +13,7 @@ from messages import Messages
 
 
 def album_to_json(album, path):
-    """ Takes a chirp library albumum and path. Returns a dict of album attributes """
+    """ Takes a chirp library album and path. Returns a dict of album attributes """
     
     result = {}
     result['path'] = path
@@ -37,6 +37,7 @@ def album_to_json(album, path):
        
         if result['compilation']:
             track['artist'] = au_file.tpe1()
+
         result['tracks'].append(track)
 
     return result
