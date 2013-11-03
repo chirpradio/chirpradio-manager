@@ -23,7 +23,7 @@ from djdb import search
 
 import current_route
 from messages import Messages
-from do_periodic_import import IMPORT_TIME_STAMP
+from do_periodic_import import ImportTimeStamp
 
 _artist_cache = {}
 
@@ -78,7 +78,7 @@ class Push(Resource):
     def do_push(self):
 
         # IMPORT_TIME_STAMP from import step        
-        START_TIMESTAMP = IMPORT_TIME_STAMP
+        START_TIMESTAMP = ImportTimeStamp.import_time_stamp
         # TODO(trow): Is this optimal?
         _NUM_ALBUMS_PER_FLUSH = 3
 

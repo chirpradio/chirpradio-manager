@@ -26,7 +26,10 @@ from flask import current_app
 
 VOLUME_NUMBER = 1
 IMPORT_SIZE_LIMIT = 0.95 * (3 << 30)  # 95% of 3GB.
-IMPORT_TIME_STAMP = None
+
+
+class ImportTimeStamp(object):
+    import_time_stamp = None
 
 
 class ImportAlbums(Resource):
@@ -35,7 +38,7 @@ class ImportAlbums(Resource):
         prescan_timestamp = timestamp.now()
 
         # timestamp to be referenced by push step
-        IMPORT_TIME_STAMP = timestamp.now()
+        ImportTimeStamp.import_time_stamp = timestamp.now()
         error_count = 0
         album_count = 0
         seen_fp = {}
