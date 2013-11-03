@@ -4,7 +4,7 @@ from flask import current_app
 
 
 class Messages(object):
-    
+
     messages = []
 
     @classmethod
@@ -14,13 +14,12 @@ class Messages(object):
             'message': message,
             'status': status
         }
-   
+
     @classmethod
     def get_message(cls):
         """ pops the next message """
         try:
             result = list(cls.messages)
-            print len(result)
             cls.messages = []
             return result
         except:
