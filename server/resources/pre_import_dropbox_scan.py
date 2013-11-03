@@ -18,7 +18,6 @@ def album_to_json(album, path):
     error = False
     result = {}
     result['path'] = path
-    print path
     try:
         result['title'] = album.title().encode('utf-8')
     except UnicodeDecodeError:
@@ -31,6 +30,8 @@ def album_to_json(album, path):
     else:
         try:
             result['artist'] = album.artist_name().encode('utf-8')
+            
+            # check encoding before data is commited
             unicode(result['artist'])
         except UnicodeDecodeError:
             error = True
@@ -50,7 +51,10 @@ def album_to_json(album, path):
 
         if result['compilation']:
             try:
-                track['artist'] = au_file.tpe1().encode('utf-8')
+                track['artist'] = au_file.mutagen_id3['TPE1'].encode('utf-8')
+
+                # check encoding before data is commited
+                unicode(track['artist'])
             except UnicodeDecodeError:
                 error = True
 
@@ -59,7 +63,6 @@ def album_to_json(album, path):
     if error:
         result['error'] = True
         Messages.add_message('There was an error at %s' % path, 'error')
-    print error
     return result
 
 
@@ -84,7 +87,6 @@ class ScanDropbox(Resource):
         # check for new artists
         new_artists = []
         for data in result:
-            print data.get('error')
             if not data.get('error'):
                 if chirp.library.artists.standardize(data['artist']) is None:
                     new_artists.append(data['artist'])
