@@ -39,6 +39,7 @@ class ImportAlbums(Resource):
 
         # timestamp to be referenced by push step
         ImportTimeStamp.import_time_stamp = timestamp.now()
+        Messages.add_message('Import time stamp set: %s' % ImportTimeStamp.import_time_stamp, 'warning')
         error_count = 0
         album_count = 0
         seen_fp = {}
@@ -52,11 +53,11 @@ class ImportAlbums(Resource):
                 # generate response
                 album_path = os.path.dirname(alb.all_au_files[0].path)
                 album_response = album_to_json(alb, album_path)
-                
+
                 # initialize error state
                 # import process will halt if an error is seen
                 album_error = False
-               
+
                 alb.drop_payloads()
                 album_count += 1
 
@@ -114,21 +115,21 @@ class ImportAlbums(Resource):
                     Messages.add_message(album_message, 'success')
 
                 albums.append(album_response)
-            
+
             if len(albums) == 0:
                 current_route.CURRENT_ROUTE = 'dropbox'
                 return None
-    
+
         except analyzer.InvalidFileError, ex:
             album_message = "<br>***** INVALID FILE ERROR<br>"
             album_message +=  "<br>%s" % str(ex)
             Messages.add_message(album_message, 'error')
-            
+
             # return null if the dropbox is not readable
             return None
 
         message = "----------<br>Found %d albums.<br>" % album_count
-     
+
         if error_count > 0:
             message += "Saw %d errors" % error_count
             Messages.add_message(message, 'error')
@@ -136,7 +137,7 @@ class ImportAlbums(Resource):
             # return albums with errors attached
             # halt import before data is commited
             return albums
-       
+
         message += "No errors found."
         Messages.add_message(message, 'success')
         Messages.add_message("Beginning import.", 'success')
@@ -153,18 +154,18 @@ class ImportAlbums(Resource):
             if txn.total_size_in_bytes > IMPORT_SIZE_LIMIT:
                 txn.commit(LIBRARY_PREFIX)
                 txn = None
-        
+
             message = "%s OK!" % alb.title()
             Messages.add_message(message, 'success')
 
         # Flush out any remaining tracks.
         if txn:
             txn.commit(LIBRARY_PREFIX)
-        
+
         message = "Import complete. OK!"
         Messages.add_message(message, 'success')
-       
-        # empty dropbox 
+
+        # empty dropbox TODO call script
         for dir in os.listdir(MUSIC_DROPBOX):
             if dir.startswith('.'):
                 continue
@@ -175,7 +176,7 @@ class ImportAlbums(Resource):
 
         message = "Dropbox emptied. OK!"
         Messages.add_message(message, 'success')
-     
+
         current_route.CURRENT_ROUTE = 'generate'
 
         return albums
@@ -190,7 +191,7 @@ class ImportAlbums(Resource):
             except:
                 Messages.add_messaage('** file: %r' % au_file.path, 'error')
                 error = True
-                
+
                 # TODO propagate error to client
                 raise
 
@@ -202,7 +203,7 @@ class ImportAlbums(Resource):
             to_print = list(new_artists)
             to_print.extend(artists.all())
             to_print.sort(key=artists.sort_key)
-       
+
             output = codecs.open(artists._WHITELIST_FILE, "w", "utf-8")
             for tpe1 in to_print:
                 output.write(tpe1)
@@ -210,7 +211,7 @@ class ImportAlbums(Resource):
 
             # reload whitelist from file
             artists._init()
-            
+
             message = "Artist whitelist updated.<br>New artists added:<br>"
             message += "<br>".join(list(new_artists))
             Messages.add_message(message, 'success')
@@ -219,7 +220,7 @@ class ImportAlbums(Resource):
             self.push_to_github()
 
     def push_to_github(self):
-        """ Push changes to the artist-whitelist to CHIRP Github 
+        """ Push changes to the artist-whitelist to CHIRP Github
 
         git-dir and work-tree must be specified because we are operating outside
         of the repo directory.
@@ -235,7 +236,7 @@ class ImportAlbums(Resource):
         )
         commit_output = subprocess.check_output(commit_command, shell=True, stderr=subprocess.STDOUT)
         Messages.add_message(commit_output, 'success')
-        
+
         # push changes
         push_command = 'git --git-dir=%s --work-tree=%s push' % (git_dir, work_tree)
         push_output = subprocess.check_output(push_command, shell=True, stderr=subprocess.STDOUT)
