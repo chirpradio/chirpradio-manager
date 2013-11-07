@@ -165,14 +165,10 @@ class ImportAlbums(Resource):
         message = "Import complete. OK!"
         Messages.add_message(message, 'success')
 
-        # empty dropbox TODO call script
-        for dir in os.listdir(MUSIC_DROPBOX):
-            if dir.startswith('.'):
-                continue
-            fn = os.path.join(MUSIC_DROPBOX, dir)
-            if not os.path.isdir(fn):
-                continue
-            shutil.rmtree(fn)
+        # empty dropbox
+        # TODO hardcode path
+        proc = subprocess.Popen(['sudo', 'empty_dropbox'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        confirm = proc.communicate('y')
 
         message = "Dropbox emptied. OK!"
         Messages.add_message(message, 'success')
