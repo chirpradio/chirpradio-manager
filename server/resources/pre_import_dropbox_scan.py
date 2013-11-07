@@ -23,17 +23,21 @@ def album_to_json(album, path):
     except UnicodeDecodeError:
         error = True
 
-    result['compilation'] = album.is_compilation()
+    try:
+        result['compilation'] = album.is_compilation()
+    except KeyError:
+        error = True
+        result['compilation'] = False
 
     if result['compilation']:
         result['artist'] = 'Various Artists'
     else:
         try:
             result['artist'] = album.artist_name().encode('utf-8')
-            
+
             # check encoding before data is commited
             unicode(result['artist'])
-        except UnicodeDecodeError:
+        except (KeyError, UnicodeDecodeError):
             error = True
 
     # build tracks
@@ -51,10 +55,8 @@ def album_to_json(album, path):
 
         if result['compilation']:
             try:
-                track['artist'] = au_file.mutagen_id3['TPE1'].encode('utf-8')
+                track['artist'] = unicode(au_file.mutagen_id3['TPE1']).encode('utf-8')
 
-                # check encoding before data is commited
-                unicode(track['artist'])
             except UnicodeDecodeError:
                 error = True
 
@@ -75,8 +77,9 @@ class ScanDropbox(Resource):
         for path in sorted(drop._dirs):
             try:
                 chirp_albums = chirp.library.album.from_directory(path, fast=True)
-            except chirp.library.album.AlbumError, e:
+            except (IOError, chirp.library.album.AlbumError), e:
                 Messages.add_message('There was an error at %s.' % path, 'error')
+                result.append({'path': path, 'title': 'There was an error at %s' % path, 'error': True})
                 continue
 
             # build albums
@@ -93,7 +96,7 @@ class ScanDropbox(Resource):
                     data['warning'] = True
 
         if new_artists:
-            Messages.add_message('New artists in dropbox: %s' % '<br>'.join(new_artists), 'warning')
+            Messages.add_message('New artists in dropbox: %s<br>' % '<br>'.join(sorted(set(new_artists))), 'warning')
 
         # only progress import process if there are albums in the dropbox
         if len(result) > 0:
