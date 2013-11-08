@@ -213,7 +213,7 @@ class ImportAlbums(Resource):
             Messages.add_message(message, 'success')
 
             # push to github
-            self.push_to_github()
+            #self.push_to_github()
 
     def push_to_github(self):
         """ Push changes to the artist-whitelist to CHIRP Github
