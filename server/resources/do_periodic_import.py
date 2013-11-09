@@ -167,7 +167,7 @@ class ImportAlbums(Resource):
 
         # empty dropbox
         # TODO hardcode path
-        proc = subprocess.Popen(['sudo', 'empty_dropbox'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(['sudo', '/home/musiclib/.virtualenvs/chirpradio-machine/bin/empty_dropbox'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         confirm = proc.communicate('y')
 
         message = "Dropbox emptied. OK!"
@@ -213,7 +213,7 @@ class ImportAlbums(Resource):
             Messages.add_message(message, 'success')
 
             # push to github
-            self.push_to_github()
+            #self.push_to_github()
 
     def push_to_github(self):
         """ Push changes to the artist-whitelist to CHIRP Github
