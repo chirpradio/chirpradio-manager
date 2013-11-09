@@ -19,7 +19,10 @@ def album_to_json(album, path):
     result = {}
     result['path'] = path
     try:
-        result['title'] = album.title().encode('utf-8')
+        result['title'] = (u'%s' % album.title()).encode('utf-8')
+
+        # try tags
+        alb.tags()
     except UnicodeDecodeError:
         error = True
 
@@ -27,6 +30,7 @@ def album_to_json(album, path):
         result['compilation'] = album.is_compilation()
     except KeyError:
         error = True
+        # if album error compilation doesn't matter
         result['compilation'] = False
 
     if result['compilation']:
