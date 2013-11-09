@@ -1,8 +1,9 @@
 *.pyc
-*.log
+*.log*
 *.nml
 *.swp
 node_modules/
 archive/
 application.js
 .DS_Store
+todo
