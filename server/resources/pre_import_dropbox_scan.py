@@ -5,6 +5,8 @@ from flask.ext.restful import Resource
 from flask import current_app
 
 import chirp.library.album
+import chirp.library.audio_file
+import chirp.library.analyzer
 import chirp.library.artists
 import chirp.library.dropbox
 
@@ -22,7 +24,7 @@ def album_to_json(album, path):
         result['title'] = (u'%s' % album.title()).encode('utf-8')
 
         # try tags
-        alb.tags()
+        album.tags()
     except UnicodeDecodeError:
         error = True
 
@@ -64,6 +66,13 @@ def album_to_json(album, path):
             except UnicodeDecodeError:
                 error = True
 
+        # do a quick analysis of track
+        try:
+            _f = chirp.library.audo_file.AudioFile()
+            chirp.library.analyzer.analyze(_f, au_file, compute_fingerprint=False, get_payload=False)
+        except chirp.library.analyzer.InvalidFileError, ex:
+            error = True 
+
         result['tracks'].append(track)
 
     if error:
@@ -80,7 +89,7 @@ class ScanDropbox(Resource):
         result = []
         for path in sorted(drop._dirs):
             try:
-                chirp_albums = chirp.library.album.from_directory(path, fast=True)
+                chirp_albums = chirp.library.album.from_directory(path, fast=False)
             except (IOError, chirp.library.album.AlbumError), e:
                 Messages.add_message('There was an error at %s.' % path, 'error')
                 result.append({'path': path, 'title': 'There was an error at %s' % path, 'error': True})
