@@ -44,11 +44,22 @@ class ImportAlbums(Resource):
         album_count = 0
         seen_fp = {}
         albums = []
+        transaction = []
 
         db = database.Database(LIBRARY_DB)
 
-        try:
-            for alb in inbox.albums():
+        dirs = inbox._dirs
+        for path in sorted(dirs):
+            try:
+                albs = album.from_directory(path)
+            except analyzer.InvalidFileError, ex:
+                album_message = "<br>***** INVALID FILE ERROR<br>"
+                album_message +=  "<br>%s" % str(ex)
+                Messages.add_message(album_message, 'error')
+
+                error_count += 1
+
+            for alb in albs:
 
                 # generate response
                 album_path = os.path.dirname(alb.all_au_files[0].path)
@@ -115,17 +126,10 @@ class ImportAlbums(Resource):
                     Messages.add_message(album_message, 'success')
 
                 albums.append(album_response)
+                transaction.append(alb)
 
-            if len(albums) == 0:
-                current_route.CURRENT_ROUTE = 'dropbox'
-                return None
-
-        except analyzer.InvalidFileError, ex:
-            album_message = "<br>***** INVALID FILE ERROR<br>"
-            album_message +=  "<br>%s" % str(ex)
-            Messages.add_message(album_message, 'error')
-
-            # return null if the dropbox is not readable
+        if len(albums) == 0:
+            current_route.CURRENT_ROUTE = 'dropbox'
             return None
 
         message = "----------<br>Found %d albums.<br>" % album_count
@@ -141,9 +145,10 @@ class ImportAlbums(Resource):
         message += "No errors found."
         Messages.add_message(message, 'success')
         Messages.add_message("Beginning import.", 'success')
-        return
+        return # TODO
+
         txn = None
-        for alb in inbox.albums():
+        for alb in transaction:
             if txn is None:
                 txn = import_transaction.ImportTransaction(db, VOLUME_NUMBER,
                                                            timestamp.now(),
@@ -166,9 +171,9 @@ class ImportAlbums(Resource):
         Messages.add_message(message, 'success')
 
         # empty dropbox
-        # TODO hardcode path
-        #proc = subprocess.Popen(['sudo', '/home/musiclib/.virtualenvs/chirpradio-machine/bin/empty_dropbox'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        #confirm = proc.communicate('y')
+        # TODO check for success
+        proc = subprocess.Popen(['sudo', '/home/musiclib/.virtualenvs/chirpradio-machine/bin/empty_dropbox'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        confirm = proc.communicate('y')
 
         message = "Dropbox emptied. OK!"
         Messages.add_message(message, 'success')
