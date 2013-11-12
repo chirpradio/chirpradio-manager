@@ -62,7 +62,7 @@ class ImportAlbums(Resource):
                 album_count += 1
 
                 # start album_message
-                album_message = u'"%s"<br>' % alb.title().encode("utf-8")
+                album_message = (u'"%s"<br>' % alb.title()).encode("utf-8")
 
                 if alb.tags():
                     album_message += "(%s)" % ", ".join(alb.tags())
@@ -141,7 +141,7 @@ class ImportAlbums(Resource):
         message += "No errors found."
         Messages.add_message(message, 'success')
         Messages.add_message("Beginning import.", 'success')
-
+        return
         txn = None
         for alb in inbox.albums():
             if txn is None:
@@ -167,8 +167,8 @@ class ImportAlbums(Resource):
 
         # empty dropbox
         # TODO hardcode path
-        proc = subprocess.Popen(['sudo', '/home/musiclib/.virtualenvs/chirpradio-machine/bin/empty_dropbox'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        confirm = proc.communicate('y')
+        #proc = subprocess.Popen(['sudo', '/home/musiclib/.virtualenvs/chirpradio-machine/bin/empty_dropbox'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #confirm = proc.communicate('y')
 
         message = "Dropbox emptied. OK!"
         Messages.add_message(message, 'success')
