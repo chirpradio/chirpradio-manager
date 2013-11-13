@@ -227,8 +227,8 @@ class ImportAlbums(Resource):
 
         TODO: remove abs paths
         """
-        git_dir = '/Users/mcf/src/chirp/chirpradio-machine/.git'
-        work_tree = '/Users/mcf/src/chirp/chirpradio-machine'
+        git_dir = '/home/musiclib/chirpradio-machine/.git'
+        work_tree = '/home/musiclib/chirpradio-machine'
 
         # commit changes
         commit_command = 'git --git-dir=%s --work-tree=%s commit %s -m "Adding new artists"' % (
