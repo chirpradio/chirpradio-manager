@@ -58,6 +58,7 @@ class ImportAlbums(Resource):
                 Messages.add_message(album_message, 'error')
                 
                 error_count += 1
+                albums.append({'path': path, 'title': 'There was an error at %s' % path, 'error': True})
                 continue
             
             for alb in albs:
@@ -218,7 +219,7 @@ class ImportAlbums(Resource):
             Messages.add_message(message, 'success')
 
             # push to github
-            #self.push_to_github()
+            self.push_to_github()
 
     def push_to_github(self):
         """ Push changes to the artist-whitelist to CHIRP Github
