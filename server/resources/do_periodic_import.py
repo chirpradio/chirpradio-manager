@@ -58,6 +58,7 @@ class ImportAlbums(Resource):
                 Messages.add_message(album_message, 'error')
                 
                 error_count += 1
+                continue
             
             for alb in albs:
 
