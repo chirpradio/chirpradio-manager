@@ -21,7 +21,7 @@ def album_to_json(album, path):
     try:
         result['title'] = (u'%s' % album.title()).encode('utf-8')
 
-        # try tags
+        # ensure tags
         album.tags()
     except UnicodeDecodeError:
         error = True
@@ -83,6 +83,7 @@ class ScanDropbox(Resource):
                 chirp_albums = chirp.library.album.from_directory(path, fast=True)
             except (IOError, chirp.library.album.AlbumError), e:
                 Messages.add_message('There was an error at %s.' % path, 'error')
+                # propagate error to ui so the album may be removed
                 result.append({'path': path, 'title': 'There was an error at %s' % path, 'error': True})
                 continue
 
