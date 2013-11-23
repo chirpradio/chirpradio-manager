@@ -56,11 +56,11 @@ class ImportAlbums(Resource):
                 album_message = "<br>***** INVALID FILE ERROR<br>"
                 album_message +=  "<br>%s" % str(ex)
                 Messages.add_message(album_message, 'error')
-                
+
                 error_count += 1
                 albums.append({'path': path, 'title': 'There was an error at %s' % path, 'error': True})
                 continue
-            
+
             for alb in albs:
 
                 # generate response
@@ -75,7 +75,7 @@ class ImportAlbums(Resource):
                 album_count += 1
 
                 # start album_message
-                album_message = u'"%s"<br>' % alb.title().encode("utf-8")
+                album_message = (u'"%s"<br>' % alb.title()).encode("utf-8")
 
                 if alb.tags():
                     album_message += "(%s)" % ", ".join(alb.tags())
@@ -85,7 +85,13 @@ class ImportAlbums(Resource):
                     album_message += "Compilation<br>"
                     for i, au in enumerate(alb.all_au_files):
                         album_message += "  %02d:" % (i+1,)
-                        album_message +=  unicode(au.mutagen_id3["TPE1"]).encode("utf-8")
+                        try:
+                            album_message +=  unicode(au.mutagen_id3["TPE1"]).encode("utf-8")
+                        except UnicodeDecodeError, e:
+                            album_message += "<br>***** Encoding ERROR<br>"
+                            album_message +=  "<br>%s" % str(ex)
+                            error_count += 1
+                            album_error = True
                 else:
                     album_message += alb.artist_name().encode("utf-8")
                 album_message += "<br>%d tracks / %d minutes<br>" % (
@@ -147,7 +153,7 @@ class ImportAlbums(Resource):
         message += "No errors found."
         Messages.add_message(message, 'success')
         Messages.add_message("Beginning import.", 'success')
-        
+
         txn = None
         for alb in transaction:
             if txn is None:
