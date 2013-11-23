@@ -85,7 +85,13 @@ class ImportAlbums(Resource):
                     album_message += "Compilation<br>"
                     for i, au in enumerate(alb.all_au_files):
                         album_message += "  %02d:" % (i+1,)
-                        album_message +=  unicode(au.mutagen_id3["TPE1"]).encode("utf-8")
+                        try:
+                            album_message +=  unicode(au.mutagen_id3["TPE1"]).encode("utf-8")
+                        except UnicodeDecodeError, e:
+                            album_message += "<br>***** Encoding ERROR<br>"
+                            album_message +=  "<br>%s" % str(ex)
+                            error_count += 1
+                            album_error = True
                 else:
                     album_message += alb.artist_name().encode("utf-8")
                 album_message += "<br>%d tracks / %d minutes<br>" % (
@@ -147,7 +153,6 @@ class ImportAlbums(Resource):
         message += "No errors found."
         Messages.add_message(message, 'success')
         Messages.add_message("Beginning import.", 'success')
-        return albums
 
         txn = None
         for alb in transaction:
