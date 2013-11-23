@@ -84,6 +84,7 @@ body,label,input,button,select,textarea {
 
 .table {
     margin-bottom:0;
+    border-bottom: 1px solid #bbb;
 }
 
 .table td {
@@ -116,7 +117,6 @@ body,label,input,button,select,textarea {
 }
 
 input[type="text"] {
-    height:10px;
     padding:4px 0;
     font-size:14px;
     color:#333;
@@ -125,9 +125,6 @@ input[type="text"] {
     -webkit-border-radius:0;
     margin:0;
     position:absolute;
-}
-
-input[type="text"] {
     width:370px;
 }
 
@@ -146,6 +143,7 @@ tr.err {
 .remove {
     cursor:pointer;
     font-size:13px;
+    width: 21px;
 }
 
 /* Right */
@@ -161,12 +159,38 @@ tr.err {
     padding-bottom:5px;
 }
 
-.artist-search input {width:210px;padding-left:5px;margin-bottom:5px;}
-.artist-search div {padding-left:6px;}
-ul#messages {list-style-type:none;margin:36px 0 10px;}
-li.error-message,li.success-message,li.warning-message {padding:8px 12px;margin:0 0 10px;border-radius:0;-moz-border-radius:0;-webkit-border-radius:0;word-wrap:break-word;}
-li.success-message {background-color:#dff0d8;}
-li.error-message {background-color:#f2dede;}
-li.warning-message {background-color:#fcf8e3;}
+.artist-search input {
+    width: 210px;
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
+
+.artist-search div {
+    padding-left: 6px;
+}
+
+ul#messages {
+    list-style-type: none;
+    margin: 36px 0 10px;
+}
+
+li.error-message,li.success-message,li.warning-message {
+    padding: 8px 12px;
+    margin:0 0 10px;
+    border-radius:0;
+    -moz-border-radius:0;
+    -webkit-border-radius:0;
+    word-wrap:break-word;
+}
+
+li.success-message {
+    background-color: #dff0d8;
+}
+
+li.error-message {
+    background-color: #f2dede;
+}
+
+li.warning-message { background-color: #fcf8e3;}
 
 #search-result {padding-top: 25px;}
