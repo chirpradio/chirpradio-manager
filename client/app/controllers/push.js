@@ -1,5 +1,4 @@
 App.PushController = Em.Controller.extend({
-  //needs: ['application', 'messages'],
   nextPath: 'success',
   status: function() {
 
