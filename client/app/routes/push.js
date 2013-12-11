@@ -1,7 +1,5 @@
 App.PushRoute = Em.Route.extend({
   model: function() {
-
-    // generate nml file
     return Em.$.getJSON('/push');
   },
   beforeModel: function(transition) {
