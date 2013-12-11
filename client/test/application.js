@@ -364,8 +364,6 @@ App.DropboxRoute = Em.Route.extend({
     
     // periodic import
     return Em.$.getJSON('/scan_dropbox').error(function() {
-      alert("An error has occurred, please contact the system's administrator.");
-      console.log('error');
       return [];
     });
   },
