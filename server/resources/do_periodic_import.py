@@ -64,7 +64,7 @@ class ImportAlbums(Resource):
             for alb in albs:
 
                 # generate response
-                album_path = os.path.dirname(alb.all_au_files[0].path)
+                album_path = path
                 album_response = album_to_json(alb, album_path)
 
                 # initialize error state
