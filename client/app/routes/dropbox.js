@@ -2,7 +2,9 @@ App.DropboxRoute = Em.Route.extend({
   model: function() {
     
     // periodic import
-    return Em.$.getJSON('/scan_dropbox');
+    return Em.$.getJSON('/scan_dropbox').error(function() {
+      return [];
+    });
   },
   beforeModel: function(transition) {
     
