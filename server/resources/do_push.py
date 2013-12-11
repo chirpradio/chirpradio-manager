@@ -4,10 +4,12 @@ import sys
 import time
 import urllib2
 
+import base64
+
 # import first to load gae-sdk env
 from chirp.common import chirpradio
 
-from flask.ext.restful import Resource
+from flask.ext.restful import Resource, abort
 from google.appengine.ext import db
 
 from chirp.common import conf
@@ -25,14 +27,31 @@ import current_route
 from messages import Messages
 from do_periodic_import import ImportTimeStamp
 
+
+
 _artist_cache = {}
+
+from flask import request
 
 class Push(Resource):
 
     def do_push_artists(self):
-        chirpradio.connect()
+        # patch credentials
+        if not request.headers.get('Authorization'):
+            abort(401)
+        else:
+            auth = request.headers['Authorization'].lstrip('Basic ')
+            username, password = base64.b64decode(auth).split(':')
+            if username and password:
+                conf.CHIRPRADIO_AUTH = '%s %s' % (username, password)
+                chirpradio.connect()
+            else:
+                abort(401)
 
         dry_run = False
+
+        # reload artists from file
+        artists._init()
 
         # Find all of the library artists
         all_library_artists = set(artists.all())
