@@ -343,6 +343,9 @@ App.ApplicationRoute = Em.Route.extend({
         
         // push mesages to ui
         messagesController.unshiftObjects(response);
+
+      }).fail(function() {
+        alert("An error has occurred, please contact the system's administrator.");
       });
     }
     
@@ -360,7 +363,11 @@ App.DropboxRoute = Em.Route.extend({
   model: function() {
     
     // periodic import
-    return Em.$.getJSON('/scan_dropbox');
+    return Em.$.getJSON('/scan_dropbox').error(function() {
+      alert("An error has occurred, please contact the system's administrator.");
+      console.log('error');
+      return [];
+    });
   },
   beforeModel: function(transition) {
     
@@ -549,8 +556,6 @@ App.IndexRoute = Em.Route.extend({
 
 App.PushRoute = Em.Route.extend({
   model: function() {
-
-    // generate nml file
     return Em.$.getJSON('/push');
   },
   beforeModel: function(transition) {
@@ -935,7 +940,6 @@ App.NavController = Em.Controller.extend({
 (function() {
 
 App.PushController = Em.Controller.extend({
-  //needs: ['application', 'messages'],
   nextPath: 'success',
   status: function() {
 
