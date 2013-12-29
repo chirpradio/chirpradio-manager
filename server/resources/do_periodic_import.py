@@ -216,6 +216,7 @@ class ImportAlbums(Resource):
             for tpe1 in to_print:
                 output.write(tpe1)
                 output.write("\n")
+            output.close()
 
             # reload whitelist from file
             artists._init()
