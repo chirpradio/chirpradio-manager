@@ -65,7 +65,7 @@ class Push(Resource):
                 continue
             std_name = artists.standardize(art.name)
             if std_name != art.name:
-                print "Mapping %d: %s => %s" % (mapped, art.name, std_name)
+                #print "Mapping %d: %s => %s" % (mapped, art.name, std_name)
                 mapped += 1
                 art.name = std_name
                 idx = search.Indexer()
@@ -84,12 +84,12 @@ class Push(Resource):
             to_push = to_push[50:]
             idx = search.Indexer()
             for name in this_push:
-                print name
+                #print name
                 art = models.Artist.create(parent=idx.transaction, name=name)
                 idx.add_artist(art)
             if not dry_run:
                 idx.save()
-            print "+++++ Indexer saved"
+            #print "+++++ Indexer saved"
 
         Messages.add_message("Artist push complete. OK!", 'success')
 
@@ -118,7 +118,8 @@ class Push(Resource):
                     _artist_cache[name] = art
                     return art
                 except urllib2.URLError:
-                    print "Retrying fetch_by_name for '%s'" % name
+                    #print "Retrying fetch_by_name for '%s'" % name
+                    pass
 
         def seen_album(album_id):
             while True:
@@ -128,7 +129,8 @@ class Push(Resource):
                             return True
                     return False
                 except urllib2.URLError:
-                    print "Retrying fetch of album_id=%s" % album_id
+                    #print "Retrying fetch of album_id=%s" % album_id
+                    pass
 
         def process_one_album(idx, alb):
             # Build up an Album entity.
@@ -147,10 +149,10 @@ class Push(Resource):
                 kwargs["is_compilation"] = False
                 kwargs["album_artist"] = get_artist_by_name(alb.artist_name())
 
-            for key, val in sorted(kwargs.iteritems()):
-                print "%s: %s" % (key, val)
+            #for key, val in sorted(kwargs.iteritems()):
+                #print "%s: %s" % (key, val)
             if seen_album(alb.album_id):
-                print "   Skipping"
+                #print "   Skipping"
                 return
 
             album = models.Album(**kwargs)
@@ -197,7 +199,8 @@ class Push(Resource):
                     idx.save(rpc=rpc)
                     return
                 except urllib2.URLError:
-                    print "Retrying indexer flush"
+                    #print "Retrying indexer flush"
+                    pass
 
 
         def maybe_flush(list_of_pending_albums):
@@ -220,10 +223,10 @@ class Push(Resource):
         for vol, import_timestamp in sql_db.get_all_imports():
             if START_TIMESTAMP is not None and import_timestamp < START_TIMESTAMP:
                 continue
-            print "***"
-            print "*** import_timestamp = %s" % timestamp.get_human_readable(
+            #print "***"
+            #print "*** import_timestamp = %s" % timestamp.get_human_readable(
                 import_timestamp)
-            print "***"
+            #print "***"
             for au_file in sql_db.get_by_import(vol, import_timestamp):
                 if this_album and this_album[0].album_id != au_file.album_id:
                     alb = album.Album(this_album)
