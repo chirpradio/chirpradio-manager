@@ -50,7 +50,10 @@ def album_to_json(album, path):
         track = {}
 
         # extract track number
-        track['number'] = re.search('^[0-9]*', au_file.mutagen_id3['TRCK'].text[0]).group(0)
+        try:
+            track['number'] = re.search('^[0-9]*', au_file.mutagen_id3['TRCK'].text[0]).group(0)
+        except KeyError:
+            error = True
 
         try:
             track['title'] = au_file.tit2().encode('utf-8')
