@@ -57,7 +57,7 @@ def album_to_json(album, path):
 
         try:
             track['title'] = au_file.tit2().encode('utf-8')
-        except UnicodeDecodeError:
+        except UnicodeDecodeError, AttributeError:
             error = True
 
         if result['compilation']:
