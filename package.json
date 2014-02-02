@@ -9,7 +9,7 @@
     "grunt-contrib-watch": "0.5.3",
     "grunt-ember-templates": "0.4.15",
     "grunt-neuter": "~0.6.x",
-    "browserify": "~2.34.3",
+    "browserify": "~2.34.4",
     "grunt-browserify": "~1.2.9"
   }
 }
