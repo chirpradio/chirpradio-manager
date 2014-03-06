@@ -96,7 +96,7 @@ class Push(Resource):
 
     def do_push(self):
 
-        # IMPORT_TIME_STAMP from import step        
+        # IMPORT_TIME_STAMP from import step
         START_TIMESTAMP = ImportTimeStamp.import_time_stamp
         # TODO(trow): Is this optimal?
         _NUM_ALBUMS_PER_FLUSH = 3
@@ -171,7 +171,7 @@ class Push(Resource):
                 track_num, _ = order.decode(unicode(au_file.mutagen_id3["TRCK"]))
                 kwargs = {}
                 if alb.is_compilation():
-                    kwargs["track_artist"] = get_artist_by_name(au_file.tpe1()) 
+                    kwargs["track_artist"] = get_artist_by_name(au_file.tpe1())
                 track = models.Track(
                     parent=idx.transaction,
                     ufid=au_file.ufid(),
@@ -213,7 +213,7 @@ class Push(Resource):
 
         #chirpradio.connect("10.0.1.98:8000")
         chirpradio.connect()
-        
+
         Messages.add_message('Beginning to push albums.', 'warning')
 
         sql_db = database.Database(conf.LIBRARY_DB)
@@ -225,7 +225,7 @@ class Push(Resource):
                 continue
             #print "***"
             #print "*** import_timestamp = %s" % timestamp.get_human_readable(
-                import_timestamp)
+                #import_timestamp)
             #print "***"
             for au_file in sql_db.get_by_import(vol, import_timestamp):
                 if this_album and this_album[0].album_id != au_file.album_id:
@@ -235,7 +235,7 @@ class Push(Resource):
                     pending_albums = maybe_flush(pending_albums)
                     this_album = []
                 this_album.append(au_file)
-            
+
         # Add the last album to the list of pending albums, then do the
         # final flush.
         if this_album:
@@ -244,12 +244,12 @@ class Push(Resource):
             pending_albums.append(alb)
             this_album = []
         flush(pending_albums)
-        
+
         Messages.add_message('Album push complete. OK!', 'success')
         Messages.add_message('Import process complete. OK!', 'success')
 
         current_route.CURRENT_ROUTE = 'import'
-        
+
     def get(self):
         self.do_push_artists()
         self.do_push()
