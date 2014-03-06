@@ -2,6 +2,7 @@
 *.log*
 *.nml
 *.swp
+*.pid
 node_modules/
 archive/
 application.js
