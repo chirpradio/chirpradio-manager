@@ -7,9 +7,24 @@ App.DropboxRoute = Em.Route.extend({
     });
   },
   beforeModel: function(transition) {
-    
-    // set loading status to true before data is ready
-    this.controllerFor('dropbox').set('working', true);
+
+    var self = this;
+
+    // return promise to delay model loading
+    return Em.$.getJSON('/current_route', function(response) {
+      
+      // call home to make sure the client is on the same step as the server
+      if (transition.targetNmae === response.route_name) {
+        
+        // set loading status to true before data is ready
+        this.controllerFor('dropbox').set('working', true);
+
+      } else {
+
+        // abort and transition to the correct route
+        self.transitionTo(response.route_name);
+      }
+    });
 
   },
   afterModel: function() {
