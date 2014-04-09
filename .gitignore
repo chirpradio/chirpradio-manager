@@ -8,3 +8,4 @@ archive/
 application.js
 .DS_Store
 todo
+lib/
