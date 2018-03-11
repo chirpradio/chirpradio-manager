@@ -1,6 +1,9 @@
 The CHIRP Music Importer
 ========================
 
+**WARNING**: This app is no longer supported. It has been superceded by
+`command-center <https://github.com/chirpradio/command-center/>`_
+
 A graphical interface to replace the import scripts provided by the `CHIRP Radio Machine <https://github.com/chirpradio/chirpradio-machine>`_.
 
 
